@@ -48,13 +48,15 @@ src/app/
     dashboard/
       page.tsx                # User dashboard (server component, welcome banner + stats)
       layanan/page.tsx        # Service CRUD (delegates to LayananDashboard client component)
-      permohonan/page.tsx     # User's applications
+      permohonan/page.tsx     # User's applications (with search + status filters)
+      permohonan/[id]/page.tsx # Application detail page (timeline, actions, revision panel)
       pembayaran/page.tsx     # User's payments
       notifikasi/page.tsx     # User's notifications
-      profil/page.tsx         # User profile
+      profil/page.tsx         # User profile (edit name, phone, password change)
       tarif/page.tsx          # Tariff management
-      kelola-permohonan/      # Admin: all applications
-      kelola-pembayaran/      # Admin: all payments
+      kelola-permohonan/      # Admin: all applications (status filters, work queue)
+      kelola-permohonan/[id]/page.tsx # Admin application detail (actions, timeline)
+      kelola-pembayaran/      # Admin: all payments (verify/reject actions)
       pengguna/page.tsx       # User management
       pengumuman/page.tsx     # Announcements CRUD
       faq/page.tsx            # FAQ CRUD
@@ -67,8 +69,24 @@ src/app/
 ## Layout Components
 
 - `src/components/layout/dashboard-sidebar.tsx` — Dark gradient sidebar with role-based menu (user items always visible, admin items for OPERATOR/ADMIN/SUPER_ADMIN). Collapsible. Uses `useSession()`
-- `src/components/layout/dashboard-header.tsx` — Sticky header with breadcrumb navigation, notification bell, user avatar
+- `src/components/layout/dashboard-header.tsx` — Sticky header with breadcrumb navigation, notification bell (live unread count), user avatar
+- `src/components/layout/notification-bell.tsx` — Client component with polling (30s interval), shows red badge with unread count (max 99+)
 - `src/components/layout/user-badge.tsx` — User info displayed in sidebar footer
+
+## Key Components
+
+- `src/components/dashboard/application-actions.tsx` — Role-aware action buttons (submit, cancel, review, revision, approve, reject, complete) with confirmation dialog
+- `src/components/dashboard/revision-panel.tsx` — Revision response panel for users (edit notes + resubmit)
+- `src/components/dashboard/profile-client.tsx` — Profile edit (name, phone) + password change with validation
+- `src/components/dashboard/permohonan-client.tsx` — User's application list with search + status filter tabs
+- `src/components/admin/kelola-permohonan-client.tsx` — Admin application list with status tabs, work queue summary, search
+- `src/components/admin/payment-verify-actions.tsx` — Payment verify/reject buttons with confirmation dialog
+
+## Auth Helpers
+
+- `src/lib/auth-helpers.ts` — `requireAuth()`, `requireRole(...)`, `getAuthSession()`, `getClientIp()`
+- `requireAuth()` returns `{ session: AuthSession }` (userId, email, name, role) or `{ error: NextResponse }`
+- `requireRole("ADMIN", "SUPER_ADMIN")` chains auth + role check
 
 ## UI Conventions
 
@@ -94,8 +112,12 @@ All under `src/app/api/`:
 - `services`, `services/[id]` — Service CRUD (route tries id then slug lookup)
 - `tariffs`, `tariffs/[id]` — Tariff CRUD
 - `applications`, `applications/[id]` — Application CRUD with status machine
-- `payments`, `payments/[id]` — Payment CRUD
+- `applications/[id]/status` — Status transitions (enforces machine rules, creates notifications)
+- `payments`, `payments/[id]` — Payment CRUD (amount validation, duplicate PENDING guard)
+- `payments/[id]/verify` — Atomic payment verification (prisma.$transaction, creates notifications)
+- `notifications/unread-count` — Unread notification count for bell badge
 - `categories`, `faqs`, `announcements`, `users` — Content/user endpoints
+- `users/[id]` — GET/PUT (admin), PATCH (self-service profile + password change)
 - Middleware allows unauthenticated GET on `/api/services`, `/api/categories`, `/api/faqs`, `/api/announcements`
 
 ## Verification After Changes

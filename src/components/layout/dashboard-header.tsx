@@ -2,10 +2,10 @@
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { Bell } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import Link from "next/link";
+import { NotificationBell } from "./notification-bell";
 
 const breadcrumbMap: Record<string, string> = {
   dashboard: "Dashboard",
@@ -65,13 +65,7 @@ export function DashboardHeader() {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard/notifikasi"
-            className="relative p-2 rounded-lg hover:bg-surface-alt transition-colors text-muted-foreground hover:text-foreground"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
-          </Link>
+          <NotificationBell />
           <div className="w-px h-6 bg-border" />
           <div className="flex items-center gap-2.5">
             <Avatar size="sm" fallback={getInitials(user?.name || "U")} />

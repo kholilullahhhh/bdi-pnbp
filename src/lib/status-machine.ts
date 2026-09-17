@@ -5,6 +5,7 @@ type StatusTransition = {
   to: ApplicationStatus;
   allowedRoles: string[];
   requiresPayment?: boolean;
+  requiresRejectionReason?: boolean;
 };
 
 // Define all allowed status transitions
@@ -35,28 +36,29 @@ export const STATUS_TRANSITIONS: StatusTransition[] = [
   {
     from: "SUBMITTED",
     to: "UNDER_REVIEW",
-    allowedRoles: ["OPERATOR", "ADMIN"],
+    allowedRoles: ["OPERATOR", "ADMIN", "SUPER_ADMIN"],
   },
   {
     from: "UNDER_REVIEW",
     to: "REVISION_REQUIRED",
-    allowedRoles: ["OPERATOR", "ADMIN"],
+    allowedRoles: ["OPERATOR", "ADMIN", "SUPER_ADMIN"],
   },
   {
     from: "UNDER_REVIEW",
     to: "APPROVED",
-    allowedRoles: ["OPERATOR", "ADMIN"],
+    allowedRoles: ["OPERATOR", "ADMIN", "SUPER_ADMIN"],
     requiresPayment: true,
   },
   {
     from: "UNDER_REVIEW",
     to: "REJECTED",
-    allowedRoles: ["OPERATOR", "ADMIN"],
+    allowedRoles: ["OPERATOR", "ADMIN", "SUPER_ADMIN"],
+    requiresRejectionReason: true,
   },
   {
     from: "APPROVED",
     to: "COMPLETED",
-    allowedRoles: ["OPERATOR", "ADMIN"],
+    allowedRoles: ["OPERATOR", "ADMIN", "SUPER_ADMIN"],
   },
 ];
 
@@ -64,7 +66,7 @@ export function canTransition(
   currentStatus: ApplicationStatus,
   targetStatus: ApplicationStatus,
   userRole: string
-): { allowed: boolean; reason?: string } {
+): { allowed: boolean; reason?: string; requiresPayment?: boolean; requiresRejectionReason?: boolean } {
   const transition = STATUS_TRANSITIONS.find(
     (t) => t.from === currentStatus && t.to === targetStatus
   );
@@ -79,11 +81,15 @@ export function canTransition(
   if (!transition.allowedRoles.includes(userRole)) {
     return {
       allowed: false,
-      reason: `Peran ${userRole} tidak memiliki wwenangan untuk transisi ini`,
+      reason: `Peran ${userRole} tidak memiliki wewenangan untuk transisi ini`,
     };
   }
 
-  return { allowed: true };
+  return {
+    allowed: true,
+    requiresPayment: transition.requiresPayment,
+    requiresRejectionReason: transition.requiresRejectionReason,
+  };
 }
 
 export function getValidTransitions(

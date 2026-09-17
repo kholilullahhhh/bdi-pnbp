@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth-helpers";
+import { requireAuth, getClientIp } from "@/lib/auth-helpers";
+import { z } from "zod";
+import { Prisma } from "@prisma/client";
+
+const updateApplicationSchema = z.object({
+  notes: z.string().max(5000, "Catatan maksimal 5000 karakter").optional(),
+  serviceName: z.string().min(1).optional(),
+  serviceId: z.string().min(1).optional(),
+});
 
 export async function GET(
   request: NextRequest,
@@ -59,10 +67,13 @@ export async function PATCH(
 
   try {
     const body = await request.json();
-    const { notes } = body;
+    const parsed = updateApplicationSchema.safeParse(body);
 
-    if (notes !== undefined && notes !== null && typeof notes !== "string") {
-      return NextResponse.json({ error: "Notes harus berupa string" }, { status: 400 });
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.errors[0].message },
+        { status: 400 }
+      );
     }
 
     const application = await prisma.application.findUnique({
@@ -76,7 +87,6 @@ export async function PATCH(
       );
     }
 
-    // User can only update own applications and only notes
     if (session.role === "USER" && application.userId !== session.userId) {
       return NextResponse.json(
         { error: "Akses ditolak" },
@@ -91,12 +101,29 @@ export async function PATCH(
       );
     }
 
-    const updated = await prisma.application.update({
-      where: { id },
-      data: {
-        notes: notes !== undefined ? notes : undefined,
-      },
-    });
+    const updateData: Record<string, unknown> = {};
+    if (parsed.data.notes !== undefined) updateData.notes = parsed.data.notes;
+    if (parsed.data.serviceName !== undefined) updateData.serviceName = parsed.data.serviceName;
+    if (parsed.data.serviceId !== undefined) updateData.serviceId = parsed.data.serviceId;
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ data: application, message: "Tidak ada perubahan" });
+    }
+
+    const [updated] = await prisma.$transaction([
+      prisma.application.update({ where: { id }, data: updateData }),
+      prisma.auditLog.create({
+        data: {
+          userId: session.userId,
+          action: "UPDATE",
+          entity: "Application",
+          entityId: id,
+          oldData: { notes: application.notes } as Prisma.InputJsonValue,
+          newData: updateData as Prisma.InputJsonValue,
+          ipAddress: getClientIp(request),
+        },
+      }),
+    ]);
 
     return NextResponse.json({ data: updated, message: "Berhasil diperbarui" });
   } catch (error) {

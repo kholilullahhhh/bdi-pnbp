@@ -1,10 +1,10 @@
 export const dynamic = "force-dynamic";
 
-import { Eye, CreditCard } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CreditCard } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getPayments, getStatusLabel, getStatusVariant, formatCurrency, formatDateShort } from "@/lib/db-queries";
+import { PaymentVerifyActions } from "@/components/admin/payment-verify-actions";
 
 export default async function KelolaPembayaranPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -49,9 +49,7 @@ export default async function KelolaPembayaranPage() {
                     <td className="py-3.5 px-4"><Badge variant={getStatusVariant(p.status)}>{getStatusLabel(p.status)}</Badge></td>
                     <td className="py-3.5 px-4 text-muted-foreground">{formatDateShort(p.createdAt)}</td>
                     <td className="py-3.5 px-4 text-right">
-                      <Button variant="ghost" size="icon" aria-label="Lihat detail" className="text-muted-foreground hover:text-primary-700">
-                        <Eye className="h-4 w-4" />
-                      </Button>
+                      <PaymentVerifyActions paymentId={p.id} currentStatus={p.status} />
                     </td>
                   </tr>
                 ))}

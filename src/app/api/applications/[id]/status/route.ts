@@ -75,13 +75,21 @@ export async function PATCH(
     }
 
     // Check payment requirement
-    if (targetStatus === "APPROVED") {
-      if (application.paymentStatus === "AWAITING_PAYMENT") {
+    if (transition.requiresPayment) {
+      if (application.paymentStatus === "AWAITING_PAYMENT" || application.paymentStatus === "NOT_APPLICABLE") {
         return NextResponse.json(
           { error: "Pembayaran belum lunas. Verifikasi pembayaran terlebih dahulu." },
           { status: 400 }
         );
       }
+    }
+
+    // Check rejection reason requirement
+    if (transition.requiresRejectionReason && !rejectionReason) {
+      return NextResponse.json(
+        { error: "Alasan penolakan wajib diisi" },
+        { status: 400 }
+      );
     }
 
     // Update application status
@@ -128,6 +136,34 @@ export async function PATCH(
         },
       }),
     ]);
+
+    // Create notification for the application owner
+    const statusLabels: Record<string, string> = {
+      SUBMITTED: "Permohonan Anda telah dikirim",
+      UNDER_REVIEW: "Permohonan Anda sedang ditinjau",
+      REVISION_REQUIRED: "Permohonan Anda membutuhkan revisi",
+      APPROVED: "Permohonan Anda telah disetujui",
+      REJECTED: "Permohonan Anda ditolak",
+      COMPLETED: "Layanan Anda telah selesai",
+      CANCELLED: "Permohonan Anda dibatalkan",
+    };
+
+    const notificationMessages: Record<string, string> = {
+      REVISION_REQUIRED: `Petugas meminta revisi: ${notes || "Tidak ada catatan"}`,
+      REJECTED: `Alasan penolakan: ${rejectionReason}`,
+      APPROVED: "Pembayaran telah terverifikasi. Permohonan disetujui.",
+      COMPLETED: "Layanan telah selesai. Silakan cek detail permohonan.",
+    };
+
+    await prisma.notification.create({
+      data: {
+        userId: application.userId,
+        title: statusLabels[targetStatus] || `Status diperbarui ke ${targetStatus}`,
+        message: notificationMessages[targetStatus] || `Status permohonan ${application.applicationNumber} diperbarui`,
+        type: targetStatus === "REJECTED" ? "warning" : targetStatus === "COMPLETED" ? "success" : "info",
+        link: `/dashboard/permohonan`,
+      },
+    });
 
     return NextResponse.json({
       data: updated,

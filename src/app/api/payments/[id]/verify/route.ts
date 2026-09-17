@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole, getClientIp } from "@/lib/auth-helpers";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const verifySchema = z.object({
   status: z.enum(["PAID", "FAILED"]),
@@ -63,9 +64,9 @@ export async function PATCH(
 
     const now = new Date();
 
-    // Execute in transaction: update payment + invoice + application status
-    const [updatedPayment] = await prisma.$transaction([
-      prisma.payment.update({
+    // Execute everything in a single transaction for atomicity
+    const results = await prisma.$transaction(async (tx) => {
+      const paymentUpdate = await tx.payment.update({
         where: { id },
         data: {
           status: targetStatus,
@@ -73,69 +74,80 @@ export async function PATCH(
           verifiedAt: now,
           notes: notes || undefined,
         },
-      }),
-      // Create payment event
-      prisma.paymentEvent.create({
+      });
+
+      await tx.paymentEvent.create({
         data: {
           paymentId: id,
           eventType: targetStatus === "PAID" ? "VERIFIED" : "FAILED",
           eventData: { verifiedBy: session.userId, notes },
         },
-      }),
-      // Audit log
-      prisma.auditLog.create({
+      });
+
+      await tx.auditLog.create({
         data: {
           userId: session.userId,
           action: "VERIFY_PAYMENT",
           entity: "Payment",
           entityId: id,
-          oldData: { status: payment.status },
-          newData: { status: targetStatus, notes },
+          oldData: { status: payment.status } as Prisma.InputJsonValue,
+          newData: { status: targetStatus, notes } as Prisma.InputJsonValue,
           ipAddress: getClientIp(request),
         },
-      }),
-    ]);
-
-    if (targetStatus === "PAID") {
-      // Calculate total paid for this invoice
-      const totalPaid = await prisma.payment.aggregate({
-        where: {
-          invoiceId: payment.invoiceId,
-          status: "PAID",
-        },
-        _sum: { amount: true },
       });
 
-      const paidAmount = totalPaid._sum.amount || 0;
-      const invoiceAmount = payment.invoice.totalAmount;
-      const isFullyPaid = Number(paidAmount) >= Number(invoiceAmount);
+      if (targetStatus === "PAID") {
+        const totalPaid = await tx.payment.aggregate({
+          where: {
+            invoiceId: payment.invoiceId,
+            status: "PAID",
+          },
+          _sum: { amount: true },
+        });
 
-      // Update invoice
-      await prisma.invoice.update({
-        where: { id: payment.invoiceId },
-        data: {
-          paidAmount: paidAmount,
-          status: isFullyPaid ? "PAID" : "PENDING",
-        },
-      });
+        const paidAmount = totalPaid._sum.amount || 0;
+        const invoiceAmount = payment.invoice.totalAmount;
+        const isFullyPaid = Number(paidAmount) >= Number(invoiceAmount);
 
-      // If fully paid, update application payment status
-      if (isFullyPaid) {
-        await prisma.application.update({
+        await tx.invoice.update({
+          where: { id: payment.invoiceId },
+          data: {
+            paidAmount: paidAmount,
+            status: isFullyPaid ? "PAID" : "PENDING",
+          },
+        });
+
+        if (isFullyPaid) {
+          await tx.application.update({
+            where: { id: payment.invoice.applicationId },
+            data: { paymentStatus: "PAID" },
+          });
+        }
+      } else {
+        await tx.application.update({
           where: { id: payment.invoice.applicationId },
-          data: { paymentStatus: "PAID" },
+          data: { paymentStatus: "FAILED" },
         });
       }
-    } else {
-      // Payment failed — update application
-      await prisma.application.update({
-        where: { id: payment.invoice.applicationId },
-        data: { paymentStatus: "FAILED" },
-      });
-    }
+
+      return paymentUpdate;
+    });
+
+    // Create notification for the application owner
+    await prisma.notification.create({
+      data: {
+        userId: payment.invoice.application.userId,
+        title: targetStatus === "PAID" ? "Pembayaran diverifikasi" : "Pembayaran ditolak",
+        message: targetStatus === "PAID"
+          ? `Pembayaran untuk ${payment.invoice.application.applicationNumber} telah diverifikasi`
+          : `Pembayaran ditolak: ${notes || "Tidak ada catatan"}`,
+        type: targetStatus === "PAID" ? "success" : "warning",
+        link: "/dashboard/pembayaran",
+      },
+    });
 
     return NextResponse.json({
-      data: updatedPayment,
+      data: results,
       message: `Pembayaran berhasil ${targetStatus === "PAID" ? "diverifikasi" : "ditolak"}`,
     });
   } catch (error) {

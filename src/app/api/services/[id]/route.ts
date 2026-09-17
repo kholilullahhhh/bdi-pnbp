@@ -14,7 +14,10 @@ export async function GET(
     where: { id },
     include: {
       category: true,
-      tariffs: { orderBy: { effectiveStartDate: "desc" } },
+      tariffs: {
+        where: { verificationStatus: "VERIFIED" },
+        orderBy: { effectiveStartDate: "desc" },
+      },
     },
   });
 
@@ -23,7 +26,10 @@ export async function GET(
       where: { slug: id },
       include: {
         category: true,
-        tariffs: { orderBy: { effectiveStartDate: "desc" } },
+        tariffs: {
+          where: { verificationStatus: "VERIFIED" },
+          orderBy: { effectiveStartDate: "desc" },
+        },
       },
     });
   }

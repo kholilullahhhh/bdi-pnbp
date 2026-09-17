@@ -5,9 +5,11 @@ import { formatCurrency, getStatusLabel, getStatusVariant, formatDateShort, form
 export const getServices = unstable_cache(
   async () => {
     return prisma.service.findMany({
+      where: { isActive: true, status: "ACTIVE" },
       include: {
         category: true,
         tariffs: {
+          where: { verificationStatus: "VERIFIED" },
           orderBy: { effectiveStartDate: "desc" },
           take: 1,
         },
@@ -18,6 +20,19 @@ export const getServices = unstable_cache(
   ["getServices"],
   { revalidate: 60, tags: ["services"] }
 );
+
+export async function getServiceBySlug(slug: string) {
+  return prisma.service.findFirst({
+    where: { slug, isActive: true, status: "ACTIVE" },
+    include: {
+      category: true,
+      tariffs: {
+        where: { verificationStatus: "VERIFIED" },
+        orderBy: { effectiveStartDate: "desc" },
+      },
+    },
+  });
+}
 
 export async function getTariffs() {
   return prisma.serviceTariff.findMany({

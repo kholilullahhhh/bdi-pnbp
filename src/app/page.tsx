@@ -30,39 +30,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
+import { prisma } from "@/lib/prisma";
 
-const services = [
-  {
-    icon: GraduationCap,
-    title: "Diklat & Pelatihan",
-    desc: "Pelatihan berbasis kompetensi industri dengan sistem 3 in 1: pelatihan, sertifikasi, dan penempatan kerja.",
-    href: "/layanan#diklat",
-    color: "bg-blue-600",
-    badge: "Populer",
-  },
-  {
-    icon: Users,
-    title: "Jasa Narasumber",
-    desc: "Seminar, workshop, dan pendampingan teknis oleh instruktur dan ahli kompeten di bidangnya.",
-    href: "/layanan#narasumber",
-    color: "bg-emerald-600",
-  },
-  {
-    icon: Home,
-    title: "Penyewaan Fasilitas",
-    desc: "Aula, ruang belajar, asrama, dan laboratorium modern untuk mendukung berbagai kegiatan Anda.",
-    href: "/layanan#penyewaan",
-    color: "bg-amber-600",
-  },
-  {
-    icon: Compass,
-    title: "Wisata Edukasi",
-    desc: "Kunjungan industri untuk pembelajaran langsung pengolahan produk pangan & kemasan.",
-    href: "/layanan#wisata",
-    color: "bg-violet-600",
-    badge: "Edukatif",
-  },
-];
+const iconMap: Record<string, typeof GraduationCap> = {
+  GraduationCap,
+  Users,
+  Home,
+  Compass,
+  Award,
+};
 
 const steps = [
   {
@@ -115,7 +91,60 @@ const testimonials = [
   },
 ];
 
-export default function HomePage() {
+const fallbackServices = [
+  {
+    id: "1",
+    name: "Diklat & Pelatihan",
+    description: "Pelatihan berbasis kompetensi industri dengan sistem 3 in 1: pelatihan, sertifikasi, dan penempatan kerja.",
+    slug: "diklat-pelatihan",
+    category: { name: "Pelatihan", icon: "GraduationCap" },
+    badge: "Populer",
+    color: "bg-blue-600",
+  },
+  {
+    id: "2",
+    name: "Jasa Narasumber",
+    description: "Seminar, workshop, dan pendampingan teknis oleh instruktur dan ahli kompeten di bidangnya.",
+    slug: "jasa-narasumber",
+    category: { name: "Jasa", icon: "Users" },
+    color: "bg-emerald-600",
+  },
+  {
+    id: "3",
+    name: "Penyewaan Fasilitas",
+    description: "Aula, ruang belajar, asrama, dan laboratorium modern untuk mendukung berbagai kegiatan Anda.",
+    slug: "penyewaan-fasilitas",
+    category: { name: "Fasilitas", icon: "Home" },
+    color: "bg-amber-600",
+  },
+  {
+    id: "4",
+    name: "Wisata Edukasi",
+    description: "Kunjungan industri untuk pembelajaran langsung pengolahan produk pangan & kemasan.",
+    slug: "wisata-edukasi",
+    category: { name: "Edukasi", icon: "Compass" },
+    badge: "Edukatif",
+    color: "bg-violet-600",
+  },
+];
+
+export default async function HomePage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let dbServices: any[] = [];
+  try {
+    dbServices = await prisma.service.findMany({
+      where: { isActive: true, status: "ACTIVE" },
+      include: {
+        category: true,
+      },
+      orderBy: { sortOrder: "asc" },
+      take: 4,
+    });
+  } catch {
+    // Use fallback services
+  }
+
+  const displayServices = dbServices.length > 0 ? dbServices : fallbackServices;
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
       <PublicNavbar />
@@ -242,41 +271,45 @@ export default function HomePage() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {services.map((s) => (
-                <Link key={s.title} href={s.href} className="group flex">
-                  <Card className="flex flex-col justify-between w-full h-full border border-border/60 hover:border-primary/40 group-hover:shadow-xl transition-all duration-300">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between mb-4">
-                        <div
-                          className={`w-12 h-12 ${s.color} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform`}
-                        >
-                          <s.icon className="h-6 w-6" />
-                        </div>
-                        {s.badge && (
-                          <Badge
-                            variant="outline"
-                            className="border-primary/30 text-primary font-medium text-xs"
+              {displayServices.map((s) => {
+                const Icon = iconMap[s.category?.icon] || GraduationCap;
+                const color = s.color || "bg-primary-600";
+                return (
+                  <Link key={s.id} href={`/layanan/${s.slug}`} className="group flex">
+                    <Card className="flex flex-col justify-between w-full h-full border border-border/60 hover:border-primary/40 group-hover:shadow-xl transition-all duration-300">
+                      <CardHeader className="pb-4">
+                        <div className="flex items-center justify-between mb-4">
+                          <div
+                            className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform`}
                           >
-                            {s.badge}
-                          </Badge>
-                        )}
-                      </div>
-                      <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
-                        {s.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex-1 flex flex-col justify-between">
-                      <CardDescription className="text-sm text-muted-foreground leading-relaxed mb-6">
-                        {s.desc}
-                      </CardDescription>
-                      <div className="flex items-center text-sm font-semibold text-primary pt-2 border-t border-border/40">
-                        Lihat Detail
-                        <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                            <Icon className="h-6 w-6" />
+                          </div>
+                          {s.badge && (
+                            <Badge
+                              variant="outline"
+                              className="border-primary/30 text-primary font-medium text-xs"
+                            >
+                              {s.badge}
+                            </Badge>
+                          )}
+                        </div>
+                        <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
+                          {s.name}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="flex-1 flex flex-col justify-between">
+                        <CardDescription className="text-sm text-muted-foreground leading-relaxed mb-6">
+                          {s.description}
+                        </CardDescription>
+                        <div className="flex items-center text-sm font-semibold text-primary pt-2 border-t border-border/40">
+                          Lihat Detail
+                          <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
