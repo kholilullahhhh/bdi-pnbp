@@ -143,7 +143,7 @@ async function main() {
     await prisma.service.upsert({
       where: { slug: service.slug },
       update: {},
-      create: service,
+      create: service as Parameters<typeof prisma.service.create>[0]["data"],
     });
   }
   console.log("✅ Services created");

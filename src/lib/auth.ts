@@ -1,30 +1,7 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-
-// Mock users - akan diganti dengan database setelah Neon terkoneksi
-const mockUsers = [
-  {
-    id: "1",
-    email: "admin@bdi-makassar.go.id",
-    password: "admin123",
-    name: "Administrator BDI",
-    role: "ADMIN",
-  },
-  {
-    id: "2",
-    email: "operator@bdi-makassar.go.id",
-    password: "operator123",
-    name: "Operator BDI",
-    role: "OPERATOR",
-  },
-  {
-    id: "3",
-    email: "user@contoh.com",
-    password: "user123",
-    name: "User Contoh",
-    role: "USER",
-  },
-];
+import bcrypt from "bcryptjs";
+import { prisma } from "@/lib/prisma";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -38,24 +15,34 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Coba cari di mock users dulu
-        const user = mockUsers.find(
-          (u) =>
-            u.email === credentials.email &&
-            u.password === credentials.password
-        );
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: credentials.email as string },
+          });
 
-        if (user) {
+          if (!user || !user.isActive) {
+            return null;
+          }
+
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password as string,
+            user.password
+          );
+
+          if (!isPasswordValid) {
+            return null;
+          }
+
           return {
             id: user.id,
             email: user.email,
             name: user.name,
             role: user.role,
           };
+        } catch (error) {
+          console.error("Auth error:", error);
+          return null;
         }
-
-        // Jika tidak ditemukan di mock, return null
-        return null;
       },
     }),
   ],
@@ -75,8 +62,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as { role: string }).role = token.role as string;
-        (session.user as { id: string }).id = token.id as string;
+        (session.user as unknown as { role: string }).role = token.role as string;
+        (session.user as unknown as { id: string }).id = token.id as string;
       }
       return session;
     },

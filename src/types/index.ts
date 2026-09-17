@@ -1,7 +1,44 @@
-export type { User, Profile, ServiceCategory, Service, ServiceTariff } from "@prisma/client";
-export type { Application, ApplicationDocument, ApplicationStatusHistory } from "@prisma/client";
-export type { Invoice, InvoiceItem, Payment, PaymentEvent, PaymentProof } from "@prisma/client";
-export type { Notification, Announcement, FAQ, AuditLog, SystemSetting } from "@prisma/client";
+import type {
+  User,
+  Profile,
+  ServiceCategory,
+  Service,
+  ServiceTariff,
+  Application,
+  ApplicationDocument,
+  ApplicationStatusHistory,
+  Invoice,
+  InvoiceItem,
+  Payment,
+  PaymentEvent,
+  PaymentProof,
+  Notification,
+  Announcement,
+  FAQ,
+  AuditLog,
+  SystemSetting,
+} from "@prisma/client";
+
+export type {
+  User,
+  Profile,
+  ServiceCategory,
+  Service,
+  ServiceTariff,
+  Application,
+  ApplicationDocument,
+  ApplicationStatusHistory,
+  Invoice,
+  InvoiceItem,
+  Payment,
+  PaymentEvent,
+  PaymentProof,
+  Notification,
+  Announcement,
+  FAQ,
+  AuditLog,
+  SystemSetting,
+};
 
 export interface SessionUser {
   id: string;

@@ -3,26 +3,13 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Sistem Informasi PNBP BDI Makassar",
-  description:
-    "Sistem Informasi Penerimaan Negara Bukan Pajak Balai Diklat Industri Makassar - Kementerian Perindustrian RI",
-  keywords: [
-    "PNBP",
-    "BDI Makassar",
-    "Balai Diklat Industri",
-    "Kementerian Perindustrian",
-    "Pelatihan Industri",
-    "Sertifikasi Kompetensi",
-  ],
+  description: "Sistem Informasi Penerimaan Negara Bukan Pajak Balai Diklat Industri Makassar - Kementerian Perindustrian RI",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id">
-      <body className="antialiased font-sans">{children}</body>
+      <body className="antialiased font-sans bg-white text-gray-900">{children}</body>
     </html>
   );
 }
