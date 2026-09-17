@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft, FileText, Clock, CheckCircle2, XCircle,
-  Send, RotateCcw, Eye, Download
+  Send, RotateCcw, Eye, Download, ClipboardCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,6 +34,16 @@ const statusColors: Record<string, string> = {
   REJECTED: "text-red-600 bg-red-50",
   COMPLETED: "text-green-600 bg-green-50",
   CANCELLED: "text-gray-600 bg-gray-50",
+};
+
+const actionDescriptions: Record<string, { title: string; desc: string; nextStatus: string }> = {
+  SUBMITTED: { title: "Kirim Permohonan", desc: "Kirim permohonan ini untuk ditinjau oleh petugas.", nextStatus: "SUBMITTED" },
+  UNDER_REVIEW: { title: "Mulai Tinjau", desc: "Mulai meninjau dokumen dan data permohonan.", nextStatus: "UNDER_REVIEW" },
+  APPROVED: { title: "Setujui Permohonan", desc: "Setujui permohonan ini. Invoice akan otomatis dibuat.", nextStatus: "APPROVED" },
+  REJECTED: { title: "Tolak Permohonan", desc: "Tolak permohonan ini. Alasan penolakan wajib diisi.", nextStatus: "REJECTED" },
+  REVISION_REQUIRED: { title: "Minta Revisi", desc: "Mint pemohon memperbaiki data atau dokumen.", nextStatus: "REVISION_REQUIRED" },
+  COMPLETED: { title: "Selesaikan Layanan", desc: "Tandai bahwa layanan telah selesai diberikan.", nextStatus: "COMPLETED" },
+  CANCELLED: { title: "Batalkan", desc: "Batalkan permohonan ini.", nextStatus: "CANCELLED" },
 };
 
 export default async function AdminApplicationDetailPage({
@@ -75,35 +85,60 @@ export default async function AdminApplicationDetailPage({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <Link
-            href="/dashboard/kelola-permohonan"
-            className="mt-1 p-2 hover:bg-surface rounded-lg transition-colors"
-          >
-            <ArrowLeft className="h-5 w-5 text-muted-foreground" />
-          </Link>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-foreground">
-                {application.applicationNumber}
-              </h1>
-              <Badge variant={getStatusVariant(application.status)}>
-                {getStatusLabel(application.status)}
-              </Badge>
+      <div className="flex items-start gap-4">
+        <Link
+          href="/dashboard/kelola-permohonan"
+          className="mt-1 p-2 hover:bg-surface rounded-lg transition-colors"
+        >
+          <ArrowLeft className="h-5 w-5 text-muted-foreground" />
+        </Link>
+        <div className="flex-1">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold text-foreground">
+              {application.applicationNumber}
+            </h1>
+            <Badge variant={getStatusVariant(application.status)}>
+              {getStatusLabel(application.status)}
+            </Badge>
+          </div>
+          <p className="text-muted-foreground mt-1">
+            {application.serviceName} — {application.user.name}
+          </p>
+        </div>
+      </div>
+
+      {/* Action Panel — Prominent */}
+      {validTransitions.length > 0 && (
+        <div className="bg-white rounded-xl border-2 border-primary-200 overflow-hidden shadow-sm">
+          <div className="bg-gradient-to-r from-primary-600 to-primary-700 px-6 py-4">
+            <div className="flex items-center gap-2 text-white">
+              <ClipboardCheck className="h-5 w-5" />
+              <h2 className="text-base font-bold">Konfirmasi Status Permohonan</h2>
             </div>
-            <p className="text-muted-foreground mt-1">
-              {application.serviceName} — {application.user.name}
+            <p className="text-primary-100/80 text-sm mt-1">
+              Pilih aksi untuk memproses permohonan ini
             </p>
           </div>
+          <div className="p-6">
+            <ApplicationActions
+              applicationId={application.id}
+              currentStatus={application.status}
+              validTransitions={validTransitions}
+              userRole={userRole}
+            />
+          </div>
         </div>
-        <ApplicationActions
-          applicationId={application.id}
-          currentStatus={application.status}
-          validTransitions={validTransitions}
-          userRole={userRole}
-        />
-      </div>
+      )}
+
+      {/* No actions available message */}
+      {validTransitions.length === 0 && (
+        <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-3">
+          <CheckCircle2 className="h-5 w-5 text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Tidak ada aksi yang tersedia untuk status saat ini.
+          </p>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Content */}
