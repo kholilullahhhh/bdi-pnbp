@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getFAQs } from "@/lib/db-queries";
 import { FAQTable } from "@/components/admin/faq-table";
 

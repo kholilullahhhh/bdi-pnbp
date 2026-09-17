@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { CreditCard, Clock, CheckCircle2, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

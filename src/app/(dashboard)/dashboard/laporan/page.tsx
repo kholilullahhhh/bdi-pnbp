@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { BarChart3, Download, Calendar, FileText, Users, CreditCard, CheckCircle2, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";

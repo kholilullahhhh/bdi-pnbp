@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAnnouncements } from "@/lib/db-queries";
 import { AnnouncementTable } from "@/components/admin/announcement-table";
 

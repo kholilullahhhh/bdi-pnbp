@@ -1,27 +1,34 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+
+const registerSchema = z.object({
+  name: z.string().min(2, "Nama minimal 2 karakter"),
+  email: z.string().email("Email tidak valid"),
+  phone: z.string().optional(),
+  instansi: z.string().optional(),
+  password: z.string().min(6, "Password minimal 6 karakter"),
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Password tidak cocok",
+  path: ["confirmPassword"],
+});
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, instansi, password } = body;
+    const parsed = registerSchema.safeParse(body);
 
-    if (!name || !email || !password) {
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "Nama, email, dan password wajib diisi" },
+        { error: parsed.error.errors[0].message },
         { status: 400 }
       );
     }
 
-    if (password.length < 6) {
-      return NextResponse.json(
-        { error: "Password minimal 6 karakter" },
-        { status: 400 }
-      );
-    }
+    const { name, email, phone, instansi, password } = parsed.data;
 
-    // Check if email already exists
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -33,32 +40,33 @@ export async function POST(request: Request) {
       );
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        phone: phone || null,
-        instansi: instansi || null,
-        password: hashedPassword,
-        role: "USER",
-        isActive: true,
-      },
-    });
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name,
+          email,
+          phone: phone || null,
+          instansi: instansi || null,
+          password: hashedPassword,
+          role: "USER",
+          isActive: true,
+        },
+      });
 
-    // Create profile
-    await prisma.profile.create({
-      data: {
-        userId: user.id,
-        instansi: instansi || null,
-      },
+      await tx.profile.create({
+        data: {
+          userId: user.id,
+          instansi: instansi || null,
+        },
+      });
+
+      return user;
     });
 
     return NextResponse.json(
-      { message: "Registrasi berhasil", userId: user.id },
+      { message: "Registrasi berhasil", userId: result.id },
       { status: 201 }
     );
   } catch (error) {

@@ -1,18 +1,23 @@
+import { unstable_cache } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { formatCurrency, getStatusLabel, getStatusVariant, formatDateShort, formatDateTime } from "@/lib/utils";
 
-export async function getServices() {
-  return prisma.service.findMany({
-    include: {
-      category: true,
-      tariffs: {
-        orderBy: { effectiveStartDate: "desc" },
-        take: 1,
+export const getServices = unstable_cache(
+  async () => {
+    return prisma.service.findMany({
+      include: {
+        category: true,
+        tariffs: {
+          orderBy: { effectiveStartDate: "desc" },
+          take: 1,
+        },
       },
-    },
-    orderBy: { sortOrder: "asc" },
-  });
-}
+      orderBy: { sortOrder: "asc" },
+    });
+  },
+  ["getServices"],
+  { revalidate: 60, tags: ["services"] }
+);
 
 export async function getTariffs() {
   return prisma.serviceTariff.findMany({
@@ -83,18 +88,26 @@ export async function getUsers() {
   });
 }
 
-export async function getAnnouncements() {
-  return prisma.announcement.findMany({
-    orderBy: { createdAt: "desc" },
-  });
-}
+export const getAnnouncements = unstable_cache(
+  async () => {
+    return prisma.announcement.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  },
+  ["getAnnouncements"],
+  { revalidate: 60, tags: ["announcements"] }
+);
 
-export async function getFAQs() {
-  return prisma.fAQ.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: "asc" },
-  });
-}
+export const getFAQs = unstable_cache(
+  async () => {
+    return prisma.fAQ.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    });
+  },
+  ["getFAQs"],
+  { revalidate: 60, tags: ["faqs"] }
+);
 
 export async function getAuditLogs() {
   return prisma.auditLog.findMany({

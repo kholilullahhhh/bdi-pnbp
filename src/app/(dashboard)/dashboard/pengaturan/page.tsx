@@ -1,5 +1,3 @@
-"use client";
-
 import { Building2, Globe, Mail, Bell, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

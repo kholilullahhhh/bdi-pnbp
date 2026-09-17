@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Bell, CheckCircle2, Info, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";

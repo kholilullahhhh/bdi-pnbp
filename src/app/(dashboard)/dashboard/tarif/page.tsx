@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getTariffs } from "@/lib/db-queries";
 import { prisma } from "@/lib/prisma";
 import { TariffTable } from "@/components/admin/tariff-table";

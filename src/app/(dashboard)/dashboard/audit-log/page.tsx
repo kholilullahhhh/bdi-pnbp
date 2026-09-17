@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { User, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";

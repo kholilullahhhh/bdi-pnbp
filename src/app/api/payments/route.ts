@@ -19,9 +19,14 @@ export async function GET(request: NextRequest) {
   const { session } = authResult;
 
   const { searchParams } = new URL(request.url);
-  const page = parseInt(searchParams.get("page") || "1", 10);
-  const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const limit = Math.min(100, Math.max(1, parseInt(searchParams.get("limit") || "10", 10)));
   const status = searchParams.get("status");
+
+  const validStatuses = ["NOT_APPLICABLE","PENDING","AWAITING_PAYMENT","PAID","FAILED","EXPIRED","REFUNDED"];
+  if (status && !validStatuses.includes(status)) {
+    return NextResponse.json({ error: "Status tidak valid" }, { status: 400 });
+  }
 
   const where: Record<string, unknown> = {};
 

@@ -61,6 +61,10 @@ export async function PATCH(
     const body = await request.json();
     const { notes } = body;
 
+    if (notes !== undefined && notes !== null && typeof notes !== "string") {
+      return NextResponse.json({ error: "Notes harus berupa string" }, { status: 400 });
+    }
+
     const application = await prisma.application.findUnique({
       where: { id },
     });

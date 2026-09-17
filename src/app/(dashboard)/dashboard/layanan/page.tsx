@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getServices } from "@/lib/db-queries";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";

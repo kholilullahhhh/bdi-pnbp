@@ -197,6 +197,7 @@ model Application {
   @@index([userId])
   @@index([status])
   @@index([serviceId])
+  @@index([createdAt])
 }
 
 model ApplicationDocument {
@@ -292,6 +293,7 @@ model Payment {
   @@index([paymentNumber])
   @@index([invoiceId])
   @@index([status])
+  @@index([createdAt])
 }
 
 model PaymentEvent {
