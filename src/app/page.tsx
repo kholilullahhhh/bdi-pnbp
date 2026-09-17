@@ -15,7 +15,10 @@ import {
   Award,
   Shield,
   BookOpen,
-  TrendingUp,
+  Sparkles,
+  Quote,
+  HelpCircle,
+  Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -35,30 +38,30 @@ const services = [
     title: "Diklat & Pelatihan",
     desc: "Pelatihan berbasis kompetensi industri dengan sistem 3 in 1: pelatihan, sertifikasi, dan penempatan kerja.",
     href: "/layanan#diklat",
-    color: "bg-primary-700",
+    color: "bg-blue-600",
     badge: "Populer",
   },
   {
     icon: Users,
     title: "Jasa Narasumber",
-    desc: "Seminar, workshop, dan pendampingan teknis oleh instruktur dan ahli kompeten.",
+    desc: "Seminar, workshop, dan pendampingan teknis oleh instruktur dan ahli kompeten di bidangnya.",
     href: "/layanan#narasumber",
     color: "bg-emerald-600",
   },
   {
     icon: Home,
     title: "Penyewaan Fasilitas",
-    desc: "Aula, ruang belajar, asrama, dan laboratorium untuk kegiatan pelatihan.",
+    desc: "Aula, ruang belajar, asrama, dan laboratorium modern untuk mendukung berbagai kegiatan Anda.",
     href: "/layanan#penyewaan",
     color: "bg-amber-600",
   },
   {
     icon: Compass,
     title: "Wisata Edukasi",
-    desc: "Kunjungan industri untuk pembelajaran pengolahan produk pangan secara langsung.",
+    desc: "Kunjungan industri untuk pembelajaran langsung pengolahan produk pangan & kemasan.",
     href: "/layanan#wisata",
     color: "bg-violet-600",
-    badge: "Rp 1 Jt",
+    badge: "Edukatif",
   },
 ];
 
@@ -66,90 +69,139 @@ const steps = [
   {
     step: "01",
     title: "Pilih Layanan",
-    desc: "Lihat katalog layanan dan pilih yang sesuai kebutuhan Anda.",
+    desc: "Eksplorasi katalog layanan PNBP dan tentukan yang sesuai kebutuhan Anda.",
   },
   {
     step: "02",
     title: "Daftar Online",
-    desc: "Isi formulir pendaftaran dan lengkapi persyaratan yang diperlukan.",
+    desc: "Isi formulir pendaftaran digital dengan cepat dan siapkan berkas persyaratan.",
   },
   {
     step: "03",
-    title: "Verifikasi & Bayar",
-    desc: "Admin melakukan verifikasi dan mengirimkan instruksi pembayaran.",
+    title: "Verifikasi & Pembayaran",
+    desc: "Dapatkan kode billing resmi setelah berkas Anda diverifikasi oleh tim admin.",
   },
   {
     step: "04",
-    title: "Layanan Selesai",
-    desc: "Nikmati layanan dan peroleh bukti pembayaran resmi.",
+    title: "Akses Layanan",
+    desc: "Nikmati layanan profesional kami dan dapatkan kuitansi/bukti pembayaran resmi.",
   },
 ];
 
 const stats = [
   { value: "40+", label: "Tahun Pengalaman", icon: Star },
   { value: "15", label: "Skema Sertifikasi", icon: Award },
-  { value: "1.000+", label: "Alumni Terlatih", icon: Users },
+  { value: "1.000+", label: "Alumni Terlatih / Thn", icon: Users },
   { value: "100%", label: "Komitmen Mutu", icon: Shield },
+];
+
+const testimonials = [
+  {
+    quote:
+      "Pelatihan 3 in 1 BDI Makassar sangat membantu meningkatkan keterampilan praktis saya hingga langsung diserap industri.",
+    author: "Andi Pratama",
+    role: "Alumni Diklat Pangan",
+  },
+  {
+    quote:
+      "Fasilitas aula dan laboratorium yang disewa sangat lengkap, bersih, dan didukung staf yang sangat responsif.",
+    author: "Siti Rahmawati",
+    role: "Mitra Kerjasama UMKM",
+  },
+  {
+    quote:
+      "Sistem informasi PNBP ini membuat proses pendaftaran layanan menjadi transparan, cepat, dan tanpa kendala.",
+    author: "Budi Santoso",
+    role: "Peserta Wisata Edukasi",
+  },
 ];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background font-sans antialiased">
       <PublicNavbar />
+
       <main className="flex-1">
-        {/* ── Hero ── */}
-        <section className="relative overflow-hidden gradient-hero">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M0%200h1v1H0z%22%20fill%3D%22rgba(255%2C255%2C255%2C0.04)%22%2F%3E%3C%2Fsvg%3E')] opacity-50" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              <div className="space-y-7 animate-fade-in">
-                <Badge className="bg-white/15 text-white border-white/20 hover:bg-white/20">
-                  <Building2 className="h-3.5 w-3.5 mr-1.5" />
-                  Kementerian Perindustrian RI
+        {/* ── 1. Hero Section ── */}
+        <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 text-white">
+          {/* Background Grid Pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+            <div className="grid lg:grid-cols-12 gap-12 items-center">
+              <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <Badge className="bg-white/10 text-primary-100 hover:bg-white/20 backdrop-blur-md border-white/20 px-3.5 py-1.5 text-xs font-medium">
+                  <Building2 className="h-4 w-4 mr-2 text-primary-300" />
+                  Kementerian Perindustrian Republik Indonesia
                 </Badge>
-                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-white leading-[1.1] tracking-tight text-balance">
-                  Sistem Informasi{" "}
-                  <span className="text-primary-200">PNBP</span>
-                  <br />
-                  BDI Makassar
+
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.15]">
+                  Layanan Resmi <br className="hidden sm:block" />
+                  <span className="bg-gradient-to-r from-primary-200 via-primary-100 to-amber-200 bg-clip-text text-transparent">
+                    PNBP BDI Makassar
+                  </span>
                 </h1>
-                <p className="text-lg text-primary-100/80 max-w-lg leading-relaxed">
-                  Portal resmi informasi Penerimaan Negara Bukan Pajak Balai
-                  Diklat Industri Makassar. Akses layanan, pengajuan, dan
-                  pelacakan status secara transparan.
+
+                <p className="text-lg sm:text-xl text-primary-100/90 max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0">
+                  Portal terpadu untuk pengajuan layanan diklat, penyewaan
+                  fasilitas, hingga konsultasi industri secara transparan,
+                  akuntabel, dan cepat.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3">
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
                   <Link href="/layanan">
                     <Button
                       size="lg"
-                      className="bg-white text-primary-800 hover:bg-primary-50 shadow-lg"
+                      className="w-full sm:w-auto bg-white text-primary-900 hover:bg-primary-50 font-semibold shadow-xl hover:shadow-2xl transition-all"
                     >
-                      Lihat Layanan
-                      <ArrowRight className="ml-2 h-4 w-4" />
+                      Jelajahi Layanan
+                      <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </Link>
                   <Link href="/panduan">
                     <Button
                       size="lg"
                       variant="outline"
-                      className="border-white/30 text-white hover:bg-white/10"
+                      className="
+                        w-full sm:w-auto
+                        inline-flex items-center justify-center gap-2
+                        rounded-xl
+                        border border-white/40
+                        bg-white/10
+                        px-6 py-3
+                        font-semibold text-white
+                        shadow-sm
+                        backdrop-blur-md
+                        transition-all duration-300
+                        hover:border-white/60
+                        hover:bg-white/20
+                        hover:text-white
+                        hover:shadow-lg
+                        active:scale-[0.98]
+                      "
                     >
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Panduan Penggunaan
+                      <BookOpen className="h-5 w-5 shrink-0" />
+                      <span>Panduan Penggunaan</span>
                     </Button>
                   </Link>
                 </div>
               </div>
-              {/* Stats */}
-              <div className="hidden lg:grid grid-cols-2 gap-4 animate-slide-up">
+
+              {/* Hero Stats Card / Floating Panel */}
+              <div className="lg:col-span-5 grid grid-cols-2 gap-4">
                 {stats.map((s) => (
                   <div
                     key={s.label}
-                    className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/10 hover:bg-white/15 transition-colors"
+                    className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/15 hover:border-white/30 hover:bg-white/15 transition-all duration-300 group"
                   >
-                    <s.icon className="h-6 w-6 text-primary-200 mb-3" />
-                    <p className="text-3xl font-bold text-white">{s.value}</p>
-                    <p className="text-sm text-primary-200/70 mt-1">
+                    <div className="p-3 w-fit rounded-xl bg-white/10 mb-4 group-hover:scale-110 transition-transform">
+                      <s.icon className="h-6 w-6 text-primary-200" />
+                    </div>
+                    <p className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                      {s.value}
+                    </p>
+                    <p className="text-sm text-primary-200/80 font-medium mt-1">
                       {s.label}
                     </p>
                   </div>
@@ -157,65 +209,70 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          {/* Wave divider */}
-          <div className="absolute bottom-0 left-0 right-0">
+
+          {/* Curved Bottom Divider */}
+          <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none">
             <svg
-              viewBox="0 0 1440 80"
-              fill="none"
-              className="w-full h-auto"
+              className="relative block w-full h-8 sm:h-12 text-background"
+              viewBox="0 0 1200 120"
               preserveAspectRatio="none"
+              fill="currentColor"
             >
-              <path
-                d="M0 80L48 74.7C96 69 192 59 288 53.3C384 48 480 48 576 53.3C672 59 768 69 864 72C960 75 1056 69 1152 64C1248 59 1344 53 1392 50.7L1440 48V80H1392C1344 80 1248 80 1152 80C1056 80 960 80 864 80C768 80 672 80 576 80C480 80 384 80 288 80C192 80 96 80 48 80H0Z"
-                fill="white"
-              />
+              <path d="M0,0 C150,90 350,-40 500,65 C650,170 900,10 1200,40 L1200,120 L0,120 Z"></path>
             </svg>
           </div>
         </section>
 
-        {/* ── Services ── */}
-        <section className="py-16 lg:py-24">
+        {/* ── 2. Services Section ── */}
+        <section className="py-20 lg:py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <Badge variant="info" className="mb-4">
-                Layanan Kami
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <Badge
+                variant="secondary"
+                className="mb-3 px-3 py-1 text-xs uppercase tracking-wider font-semibold"
+              >
+                Katalog Utama
               </Badge>
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
-                Layanan PNBP BDI Makassar
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                Layanan Unggulan Kami
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-                Berbagai layanan untuk mendukung pengembangan sumber daya
-                manusia industri
+              <p className="mt-4 text-base sm:text-lg text-muted-foreground">
+                Pilih berbagai skema pelatihan dan fasilitas terbaik yang siap
+                mendukung akselerasi SDM serta bisnis Anda.
               </p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {services.map((s) => (
-                <Link key={s.title} href={s.href} className="group">
-                  <Card className="h-full group-hover:shadow-lg group-hover:border-primary-200 transition-all duration-200">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
+                <Link key={s.title} href={s.href} className="group flex">
+                  <Card className="flex flex-col justify-between w-full h-full border border-border/60 hover:border-primary/40 group-hover:shadow-xl transition-all duration-300">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between mb-4">
                         <div
-                          className={`w-11 h-11 ${s.color} rounded-xl flex items-center justify-center shadow-sm`}
+                          className={`w-12 h-12 ${s.color} rounded-xl flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform`}
                         >
-                          <s.icon className="h-5 w-5 text-white" />
+                          <s.icon className="h-6 w-6" />
                         </div>
                         {s.badge && (
-                          <Badge variant="success" className="text-[10px]">
+                          <Badge
+                            variant="outline"
+                            className="border-primary/30 text-primary font-medium text-xs"
+                          >
                             {s.badge}
                           </Badge>
                         )}
                       </div>
-                      <CardTitle className="text-base group-hover:text-primary-700 transition-colors mt-3">
+                      <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
                         {s.title}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <CardDescription className="text-sm leading-relaxed">
+                    <CardContent className="flex-1 flex flex-col justify-between">
+                      <CardDescription className="text-sm text-muted-foreground leading-relaxed mb-6">
                         {s.desc}
                       </CardDescription>
-                      <div className="mt-4 flex items-center text-sm font-medium text-primary-700">
-                        Selengkapnya
-                        <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                      <div className="flex items-center text-sm font-semibold text-primary pt-2 border-t border-border/40">
+                        Lihat Detail
+                        <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </CardContent>
                   </Card>
@@ -225,80 +282,82 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── How it Works ── */}
-        <section className="py-16 lg:py-24 bg-surface">
+        {/* ── 3. How It Works Section ── */}
+        <section className="py-20 bg-muted/40 border-y border-border/50 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <Badge variant="info" className="mb-4">
-                Cara Kerja
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <Badge
+                variant="secondary"
+                className="mb-3 px-3 py-1 text-xs uppercase tracking-wider font-semibold"
+              >
+                Alur Kerja
               </Badge>
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
-                Cara Menggunakan Layanan
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                4 Langkah Mudah Mengakses Layanan
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                Proses yang mudah, transparan, dan terpercaya
+              <p className="mt-4 text-muted-foreground">
+                Proses transparan dan terintegrasi secara sistematis dari awal
+                hingga selesai.
               </p>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-5xl mx-auto">
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
               {steps.map((s, i) => (
-                <div key={s.step} className="relative text-center">
-                  {/* Connector line */}
-                  {i < steps.length - 1 && (
-                    <div className="hidden lg:block absolute top-8 left-[60%] w-[80%] h-px bg-border z-0" />
-                  )}
-                  <div className="relative z-10">
-                    <div className="w-16 h-16 bg-primary-700 rounded-2xl flex items-center justify-center text-white text-lg font-bold mx-auto mb-4 shadow-md">
-                      {s.step}
-                    </div>
-                    <h3 className="text-base font-semibold text-foreground mb-2">
-                      {s.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {s.desc}
-                    </p>
+                <div
+                  key={s.step}
+                  className="relative flex flex-col items-center text-center group"
+                >
+                  {/* Step Badge/Icon */}
+                  <div className="w-16 h-16 rounded-2xl bg-primary text-primary-foreground font-black text-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform mb-6 relative z-10">
+                    {s.step}
                   </div>
+                  <h3 className="text-lg font-bold text-foreground mb-2">
+                    {s.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {s.desc}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── About BDI ── */}
-        <section className="py-16 lg:py-24">
+        {/* ── 4. About Section ── */}
+        <section className="py-20 lg:py-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              <div>
-                <Badge variant="info" className="mb-4">
-                  Tentang Kami
+            <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+              <div className="lg:col-span-6 space-y-6">
+                <Badge
+                  variant="secondary"
+                  className="px-3 py-1 text-xs uppercase tracking-wider font-semibold"
+                >
+                  Profil Lembaga
                 </Badge>
-                <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight mb-6">
-                  Tentang BDI Makassar
+                <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight leading-tight">
+                  Membangun SDM Industri Unggul dan Berdaya Saing
                 </h2>
-                <div className="space-y-4 text-muted-foreground leading-relaxed">
-                  <p>
-                    Balai Diklat Industri (BDI) Makassar adalah Unit Pelaksana
-                    Teknis di bawah BPSDMI Kementerian Perindustrian RI.
-                  </p>
-                  <p>
-                    Berdiri sejak tahun 1981, BDI Makassar memiliki spesialisasi
-                    di bidang agro, pangan, dan fitofarmaka dengan spesialis
-                    penunjang desain kemasan industri.
-                  </p>
-                  <p>
-                    Dengan sistem Diklat 3 in 1 (pelatihan + sertifikasi +
-                    penempatan kerja), kami berkomitmen menghasilkan SDM industri
-                    yang kompeten dan siap kerja.
-                  </p>
-                </div>
-                <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <p className="text-muted-foreground leading-relaxed">
+                  Balai Diklat Industri (BDI) Makassar merupakan Unit Pelaksana
+                  Teknis di bawah Badan Pengembangan Sumber Daya Manusia
+                  Industri (BPSDMI) Kementerian Perindustrian RI.
+                </p>
+                <p className="text-muted-foreground leading-relaxed">
+                  Berfokus pada spesialisasi industri **Agro, Pangan,
+                  Fitofarmaka, dan Desain Kemasan**, BDI Makassar hadir
+                  memberikan kontribusi nyata bagi pertumbuhan sektor industri
+                  nasional.
+                </p>
+
+                <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    "Pelatihan berbasis kompetensi",
-                    "Sertifikasi melalui LSP BNSP",
-                    "Penempatan kerja di industri",
-                    "Fasilitas modern dan lengkap",
+                    "Sistem Diklat 3 in 1 Terpadu",
+                    "Sertifikasi Kompetensi BNSP",
+                    "Jaringan Mitra Industri Luas",
+                    "Fasilitas Laboratorium Modern",
                   ].map((item) => (
-                    <div key={item} className="flex items-center gap-2.5">
-                      <CheckCircle2 className="h-5 w-5 text-success flex-shrink-0" />
+                    <div key={item} className="flex items-center gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-emerald-600 flex-shrink-0" />
                       <span className="text-sm font-medium text-foreground">
                         {item}
                       </span>
@@ -306,39 +365,40 @@ export default function HomePage() {
                   ))}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+
+              {/* Right Feature Cards */}
+              <div className="lg:col-span-6 grid grid-cols-2 gap-4">
                 {[
                   {
                     icon: GraduationCap,
                     title: "Diklat 3 in 1",
-                    desc: "Pelatihan, sertifikasi, dan penempatan",
-                    color: "text-primary-700",
+                    desc: "Pelatihan, sertifikasi & penempatan kerja.",
                   },
                   {
                     icon: Star,
-                    title: "LSP BNSP",
-                    desc: "15 skema sertifikasi",
-                    color: "text-amber-500",
+                    title: "LSP-P2 BNSP",
+                    desc: "Pengujian dengan standar kompetensi kerja nasional.",
                   },
                   {
                     icon: Users,
                     title: "Inkubator Bisnis",
-                    desc: "Pendampingan UMKM",
-                    color: "text-emerald-600",
+                    desc: "Pendampingan dan komersialisasi UMKM.",
                   },
                   {
                     icon: Building2,
-                    title: "Fasilitas Lengkap",
-                    desc: "Aula, lab, asrama",
-                    color: "text-violet-600",
+                    title: "Sarana Lengkap",
+                    desc: "Gedung diklat, asrama, & lab pengolahan.",
                   },
-                ].map((c) => (
-                  <Card key={c.title} className="p-5 hover:shadow-md transition-shadow">
-                    <c.icon className={`h-7 w-7 ${c.color} mb-3`} />
-                    <h3 className="font-semibold text-foreground text-sm">
+                ].map((c, idx) => (
+                  <Card
+                    key={c.title}
+                    className="p-6 border border-border/60 hover:shadow-md transition-shadow"
+                  >
+                    <c.icon className="h-8 w-8 text-primary mb-4" />
+                    <h3 className="font-bold text-foreground text-base mb-1">
                       {c.title}
                     </h3>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs text-muted-foreground leading-relaxed">
                       {c.desc}
                     </p>
                   </Card>
@@ -348,50 +408,163 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── Contact ── */}
-        <section className="py-16 lg:py-24 bg-surface">
+        {/* ── 5. Testimonials Section ── */}
+        <section className="py-20 bg-muted/30 border-t border-border/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <Badge variant="info" className="mb-4">
-                Hubungi Kami
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <Badge
+                variant="secondary"
+                className="mb-3 px-3 py-1 text-xs uppercase tracking-wider font-semibold"
+              >
+                Testimoni
               </Badge>
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
-                Butuh Bantuan?
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                Apa Kata Mereka?
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground">
-                Kami siap membantu Anda
+              <p className="mt-4 text-muted-foreground">
+                Pengalaman dari para alumni, mitra industri, dan pengguna
+                layanan PNBP BDI Makassar.
               </p>
             </div>
-            <div className="grid sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
+
+            <div className="grid md:grid-cols-3 gap-6">
+              {testimonials.map((t, idx) => (
+                <Card
+                  key={idx}
+                  className="p-6 border border-border/60 flex flex-col justify-between"
+                >
+                  <CardContent className="p-0">
+                    <Quote className="h-8 w-8 text-primary/30 mb-4" />
+                    <p className="text-sm text-foreground/90 italic leading-relaxed mb-6">
+                      "{t.quote}"
+                    </p>
+                  </CardContent>
+                  <div className="pt-4 border-t border-border/40">
+                    <p className="font-bold text-sm text-foreground">
+                      {t.author}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── 6. CTA Banner Section ── */}
+        <section className="py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-gradient-to-r from-primary-800 to-primary-950 rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="space-y-4 max-w-2xl text-center lg:text-left z-10">
+                <Badge className="bg-amber-400/20 text-amber-200 border-amber-400/30">
+                  <Sparkles className="h-3.5 w-3.5 mr-1.5" />
+                  Siap Melayani Anda
+                </Badge>
+                <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+                  Tingkatkan Kompetensi & Fasilitas Anda Sekarang
+                </h2>
+                <p className="text-primary-100/80 text-sm sm:text-base">
+                  Daftarkan diri atau instansi Anda untuk menggunakan layanan
+                  PNBP BDI Makassar secara langsung dan mudah.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 z-10 w-full sm:w-auto">
+                <Link href="/layanan">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto bg-amber-400 text-primary-950 hover:bg-amber-300 font-bold shadow-lg"
+                  >
+                    Ajukan Layanan
+                  </Button>
+                </Link>
+                <Link href="/kontak">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="
+                      w-full sm:w-auto
+                      inline-flex items-center justify-center gap-2
+                      rounded-xl
+                      border border-white/40
+                      bg-white/10
+                      px-6 py-3
+                      font-semibold text-white
+                      shadow-sm
+                      backdrop-blur-md
+                      transition-all duration-300
+                      hover:border-white/60
+                      hover:bg-white/20
+                      hover:text-white
+                      active:scale-[0.98]
+                    "
+                  >
+                    <Headphones className="h-5 w-5 shrink-0" />
+                    <span>Hubungi Admin</span>
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── 7. Contact Section ── */}
+        <section className="py-20 bg-muted/40 border-t border-border/50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <Badge
+                variant="secondary"
+                className="mb-3 px-3 py-1 text-xs uppercase tracking-wider font-semibold"
+              >
+                Kontak & Lokasi
+              </Badge>
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground tracking-tight">
+                Informasi Pelayanan
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Kunjungi kami atau hubungi Helpdesk untuk konsultasi lebih
+                lanjut.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {[
                 {
                   icon: MapPin,
-                  title: "Alamat",
+                  title: "Alamat Kantor",
                   lines: [
                     "Jl. Perintis Kemerdekaan Km 17",
-                    "Kota Makassar, Sulawesi Selatan",
+                    "Makassar, Sulawesi Selatan 90242",
                   ],
                 },
                 {
                   icon: Phone,
-                  title: "Telepon & WhatsApp",
-                  lines: ["0411-556617", "WA: 0822-9331-9335"],
+                  title: "Kontak Resmi",
+                  lines: ["Telp: (0411) 556617", "WhatsApp: 0822-9331-9335"],
                 },
                 {
                   icon: Clock,
-                  title: "Jam Layanan",
-                  lines: ["Sen–Kam: 07:00–16:00", "Jumat: 07:30–16:30"],
+                  title: "Jam Operasional",
+                  lines: [
+                    "Senin – Kamis: 08:00 – 16:00 WITA",
+                    "Jumat: 08:00 – 16:30 WITA",
+                  ],
                 },
               ].map((c) => (
-                <Card key={c.title} className="text-center p-6 hover:shadow-md transition-shadow">
-                  <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <c.icon className="h-6 w-6 text-primary-700" />
+                <Card
+                  key={c.title}
+                  className="text-center p-8 border border-border/60 hover:shadow-md transition-shadow"
+                >
+                  <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-5 text-primary">
+                    <c.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-semibold text-foreground mb-2">
+                  <h3 className="font-bold text-foreground text-lg mb-2">
                     {c.title}
                   </h3>
                   {c.lines.map((l) => (
-                    <p key={l} className="text-sm text-muted-foreground">
+                    <p
+                      key={l}
+                      className="text-sm text-muted-foreground leading-relaxed"
+                    >
                       {l}
                     </p>
                   ))}
@@ -401,6 +574,7 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+
       <PublicFooter />
     </div>
   );

@@ -1,5 +1,3 @@
-"use client";
-
 import { Bell, CheckCircle2, Info, AlertTriangle } from "lucide-react";
 import {
   Card,
@@ -7,34 +5,27 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { formatDateTime } from "@/lib/utils";
 
-const notifications: {
-  id: string;
-  title: string;
-  message: string;
-  type: string;
-  read: boolean;
-  date: string;
-}[] = [];
-
-const typeConfig: Record<
-  string,
-  { icon: typeof Info; color: string; bg: string }
-> = {
-  INFO: { icon: Info, color: "text-primary-700", bg: "bg-primary-50" },
-  WARNING: {
-    icon: AlertTriangle,
-    color: "text-amber-600",
-    bg: "bg-amber-50",
-  },
-  SUCCESS: {
-    icon: CheckCircle2,
-    color: "text-emerald-600",
-    bg: "bg-emerald-50",
-  },
+const typeConfig: Record<string, { icon: typeof Info; color: string; bg: string }> = {
+  info: { icon: Info, color: "text-primary-700", bg: "bg-primary-50" },
+  warning: { icon: AlertTriangle, color: "text-amber-600", bg: "bg-amber-50" },
+  success: { icon: CheckCircle2, color: "text-emerald-600", bg: "bg-emerald-50" },
 };
 
-export default function NotifikasiPage() {
+export default async function NotifikasiPage() {
+  const session = await auth();
+  const userId = (session?.user as unknown as { id: string })?.id;
+
+  if (!userId) return null;
+
+  const notifications = await prisma.notification.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -60,18 +51,16 @@ export default function NotifikasiPage() {
           ) : (
             <div className="divide-y divide-border">
               {notifications.map((n) => {
-                const config = typeConfig[n.type] || typeConfig.INFO;
+                const config = typeConfig[n.type] || typeConfig.info;
                 const Icon = config.icon;
                 return (
                   <div
                     key={n.id}
                     className={`p-4 flex items-start gap-4 transition-colors ${
-                      !n.read ? "bg-primary-50/30" : "hover:bg-surface-alt/50"
+                      !n.isRead ? "bg-primary-50/30" : "hover:bg-surface-alt/50"
                     }`}
                   >
-                    <div
-                      className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${config.bg}`}
-                    >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${config.bg}`}>
                       <Icon className={`h-4 w-4 ${config.color}`} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -80,14 +69,14 @@ export default function NotifikasiPage() {
                           {n.title}
                         </p>
                         <span className="text-xs text-muted-foreground whitespace-nowrap">
-                          {new Date(n.date).toLocaleDateString("id-ID")}
+                          {formatDateTime(n.createdAt)}
                         </span>
                       </div>
                       <p className="text-sm text-muted-foreground mt-0.5 leading-relaxed">
                         {n.message}
                       </p>
                     </div>
-                    {!n.read && (
+                    {!n.isRead && (
                       <div className="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0 mt-2" />
                     )}
                   </div>

@@ -1,62 +1,15 @@
-"use client";
-
-import { useState } from "react";
-import { Search, Eye, FileText } from "lucide-react";
+import { Eye, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getStatusLabel, getStatusVariant, formatDateShort } from "@/lib/utils";
+import { getApplications, getStatusLabel, getStatusVariant, formatDateShort } from "@/lib/db-queries";
 
-const mockApplications = [
-  {
-    id: "PNBP-202609-0001",
-    user: "Budi Santoso",
-    service: "Wisata Edukasi Cokelat",
-    status: "SUBMITTED",
-    date: "2026-09-17",
-  },
-  {
-    id: "PNBP-202609-0002",
-    user: "PT Maju Jaya",
-    service: "Pelatihan Penyelia Halal",
-    status: "UNDER_REVIEW",
-    date: "2026-09-16",
-  },
-  {
-    id: "PNBP-202609-0003",
-    user: "SMA Negeri 1 Makassar",
-    service: "Wisata Edukasi Cokelat",
-    status: "COMPLETED",
-    date: "2026-09-15",
-  },
-];
-
-const statusFilters = [
-  { label: "Semua", value: "ALL" },
-  { label: "Diajukan", value: "SUBMITTED" },
-  { label: "Diproses", value: "UNDER_REVIEW" },
-  { label: "Selesai", value: "COMPLETED" },
-];
-
-export default function AdminPermohonanPage() {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
-
-  const filtered = mockApplications.filter(
-    (a) =>
-      (statusFilter === "ALL" || a.status === statusFilter) &&
-      (!search ||
-        a.id.toLowerCase().includes(search.toLowerCase()) ||
-        a.user.toLowerCase().includes(search.toLowerCase()) ||
-        a.service.toLowerCase().includes(search.toLowerCase()))
-  );
+export default async function AdminPermohonanPage() {
+  const applications = await getApplications();
 
   return (
     <div className="space-y-6">
@@ -69,42 +22,13 @@ export default function AdminPermohonanPage() {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Cari nomor, nama, atau layanan..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-1.5 bg-surface p-1 rounded-lg border border-border">
-          {statusFilters.map((f) => (
-            <button
-              key={f.value}
-              type="button"
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                statusFilter === f.value
-                  ? "bg-white text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              onClick={() => setStatusFilter(f.value)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <Card>
         <CardContent className="p-0">
-          {filtered.length === 0 ? (
+          {applications.length === 0 ? (
             <EmptyState
               icon={<FileText className="h-8 w-8" />}
               title="Tidak ada permohonan"
-              description="Tidak ada permohonan yang cocok dengan filter Anda."
+              description="Belum ada permohonan yang diajukan."
             />
           ) : (
             <div className="overflow-x-auto">
@@ -132,22 +56,22 @@ export default function AdminPermohonanPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((app) => (
+                  {applications.map((app) => (
                     <tr
                       key={app.id}
                       className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
                     >
                       <td className="py-3.5 px-4 font-mono text-xs text-foreground">
-                        {app.id}
+                        {app.applicationNumber}
                       </td>
                       <td className="py-3.5 px-4 font-medium text-foreground">
-                        {app.user}
+                        {app.user.name}
                       </td>
                       <td className="py-3.5 px-4 text-muted-foreground">
-                        {app.service}
+                        {app.serviceName}
                       </td>
                       <td className="py-3.5 px-4 text-muted-foreground">
-                        {formatDateShort(app.date)}
+                        {formatDateShort(app.createdAt)}
                       </td>
                       <td className="py-3.5 px-4">
                         <Badge variant={getStatusVariant(app.status)}>
@@ -155,11 +79,7 @@ export default function AdminPermohonanPage() {
                         </Badge>
                       </td>
                       <td className="py-3.5 px-4 text-right">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label="Lihat detail"
-                        >
+                        <Button variant="ghost" size="icon" aria-label="Lihat detail">
                           <Eye className="h-4 w-4" />
                         </Button>
                       </td>

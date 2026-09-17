@@ -1,26 +1,46 @@
-"use client";
-
-import { CreditCard, Download } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { formatCurrency, getStatusLabel, getStatusVariant } from "@/lib/utils";
 
-const payments: {
-  id: string;
-  service: string;
-  amount: number;
-  status: string;
-  date: string;
-}[] = [];
+export default async function PembayaranPage() {
+  const session = await auth();
+  const userId = (session?.user as unknown as { id: string })?.id;
 
-export default function PembayaranPage() {
+  if (!userId) return null;
+
+  const [payments, summary] = await Promise.all([
+    prisma.payment.findMany({
+      where: { invoice: { application: { userId } } },
+      include: {
+        invoice: {
+          include: {
+            application: { select: { serviceName: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.payment.aggregate({
+      where: {
+        status: "PAID",
+        invoice: { application: { userId } },
+      },
+      _sum: { amount: true },
+    }),
+  ]);
+
+  const pendingCount = payments.filter((p) => p.status === "PENDING").length;
+  const paidCount = payments.filter((p) => p.status === "PAID").length;
+  const totalPaid = summary._sum.amount ? Number(summary._sum.amount) : 0;
+
   return (
     <div className="space-y-6">
       <div>
@@ -30,14 +50,13 @@ export default function PembayaranPage() {
         </p>
       </div>
 
-      {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-5">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Menunggu Pembayaran
             </p>
-            <p className="text-2xl font-bold text-foreground mt-1">0</p>
+            <p className="text-2xl font-bold text-foreground mt-1">{pendingCount}</p>
           </CardContent>
         </Card>
         <Card>
@@ -45,7 +64,7 @@ export default function PembayaranPage() {
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               Lunas
             </p>
-            <p className="text-2xl font-bold text-emerald-600 mt-1">0</p>
+            <p className="text-2xl font-bold text-emerald-600 mt-1">{paidCount}</p>
           </CardContent>
         </Card>
         <Card>
@@ -54,13 +73,12 @@ export default function PembayaranPage() {
               Total Dibayar
             </p>
             <p className="text-2xl font-bold text-foreground mt-1">
-              {formatCurrency(0)}
+              {formatCurrency(totalPaid)}
             </p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Table */}
       <Card>
         <CardContent className="p-0">
           {payments.length === 0 ? (
@@ -75,7 +93,7 @@ export default function PembayaranPage() {
                 <thead>
                   <tr className="border-b border-border bg-surface">
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-                      ID Pembayaran
+                      Referensi
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Layanan
@@ -98,11 +116,13 @@ export default function PembayaranPage() {
                       className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
                     >
                       <td className="py-3.5 px-4 font-mono text-xs">
-                        {p.id}
+                        {p.paymentNumber}
                       </td>
-                      <td className="py-3.5 px-4 font-medium">{p.service}</td>
                       <td className="py-3.5 px-4 font-medium">
-                        {formatCurrency(p.amount)}
+                        {p.invoice.application.serviceName}
+                      </td>
+                      <td className="py-3.5 px-4 font-medium">
+                        {formatCurrency(Number(p.amount))}
                       </td>
                       <td className="py-3.5 px-4">
                         <Badge variant={getStatusVariant(p.status)}>
@@ -111,7 +131,7 @@ export default function PembayaranPage() {
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <Button variant="ghost" size="icon" aria-label="Unduh bukti">
-                          <Download className="h-4 w-4" />
+                          <CreditCard className="h-4 w-4" />
                         </Button>
                       </td>
                     </tr>

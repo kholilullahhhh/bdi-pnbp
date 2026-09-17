@@ -29,7 +29,6 @@ export default function PengaturanPage() {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Profil Institusi */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -42,10 +41,7 @@ export default function PengaturanPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="institusi">Nama Institusi</Label>
-              <Input
-                id="institusi"
-                defaultValue="Balai Diklat Industri Makassar"
-              />
+              <Input id="institusi" defaultValue="Balai Diklat Industri Makassar" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="singkatan">Singkatan</Label>
@@ -53,10 +49,7 @@ export default function PengaturanPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="kementerian">Kementerian</Label>
-              <Input
-                id="kementerian"
-                defaultValue="Kementerian Perindustrian RI"
-              />
+              <Input id="kementerian" defaultValue="Kementerian Perindustrian RI" />
             </div>
             <Button>
               <Save className="mr-1.5 h-4 w-4" />
@@ -65,7 +58,6 @@ export default function PengaturanPage() {
           </CardContent>
         </Card>
 
-        {/* Situs Web */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -78,10 +70,7 @@ export default function PengaturanPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="website">Website Utama</Label>
-              <Input
-                id="website"
-                defaultValue="bdimakassar.kemenperin.go.id"
-              />
+              <Input id="website" defaultValue="bdimakassar.kemenperin.go.id" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="website-alt">Website Alternatif</Label>
@@ -98,7 +87,6 @@ export default function PengaturanPage() {
           </CardContent>
         </Card>
 
-        {/* Kontak */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
@@ -111,10 +99,7 @@ export default function PengaturanPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email-kontak">Email</Label>
-              <Input
-                id="email-kontak"
-                defaultValue="bdimks.kemenperin@gmail.com"
-              />
+              <Input id="email-kontak" defaultValue="bdimks.kemenperin@gmail.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="telepon">Telepon</Label>
@@ -131,7 +116,6 @@ export default function PengaturanPage() {
           </CardContent>
         </Card>
 
-        {/* Notifikasi */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">

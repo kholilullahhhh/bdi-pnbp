@@ -73,6 +73,7 @@ model User {
   applications          Application[]
   notifications         Notification[]
   auditLogs             AuditLog[]
+  statusChanges         ApplicationStatusHistory[]
   createdServices       Service[]           @relation("ServiceCreator")
   createdAnnouncements  Announcement[]     @relation("AnnouncementCreator")
   createdFAQs           FAQ[]              @relation("FaqCreator")
@@ -223,6 +224,7 @@ model ApplicationStatusHistory {
   changedAt     DateTime          @default(now())
 
   application   Application       @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  changedBy     User?             @relation(fields: [changedById], references: [id])
 
   @@index([applicationId])
 }

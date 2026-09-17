@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   Layers,
@@ -22,7 +23,7 @@ import {
   DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Avatar } from "@/components/ui/avatar";
+import { UserBadge } from "./user-badge";
 
 const navSections = [
   {
@@ -55,8 +56,15 @@ const navSections = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <>
@@ -176,30 +184,20 @@ export function AdminSidebar() {
           {/* User & logout */}
           <div className="p-2.5 border-t border-primary-800 space-y-1">
             {!collapsed && (
-              <div className="px-3 py-2 flex items-center gap-2.5">
-                <Avatar size="sm" fallback="A" className="bg-primary-700" />
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-medium text-white truncate">
-                    Admin
-                  </p>
-                  <p className="text-[10px] text-primary-400 truncate">
-                    admin@bdi-makassar.go.id
-                  </p>
-                </div>
-              </div>
+              <UserBadge className="text-white [&_p]:text-white [&_p:first-child]:text-white [&_p:last-child]:text-primary-400" />
             )}
-            <Link
-              href="/"
+            <button
+              type="button"
+              onClick={handleLogout}
               className={cn(
-                "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-300 hover:bg-red-500/10 hover:text-red-400 transition-colors",
+                "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-primary-300 hover:bg-red-500/10 hover:text-red-400 transition-colors w-full text-left",
                 collapsed && "justify-center px-2"
               )}
-              onClick={() => setMobileOpen(false)}
               title={collapsed ? "Keluar" : undefined}
             >
               <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
               {!collapsed && <span>Keluar</span>}
-            </Link>
+            </button>
           </div>
         </div>
       </aside>

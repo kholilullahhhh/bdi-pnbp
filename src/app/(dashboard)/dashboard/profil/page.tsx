@@ -1,5 +1,3 @@
-"use client";
-
 import {
   User,
   Mail,
@@ -19,33 +17,35 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { formatDate, getInitials } from "@/lib/utils";
 
-const user = {
-  name: "User Demo",
-  email: "user@contoh.com",
-  phone: "081234567890",
-  instansi: "Universitas Hasanuddin",
-  role: "USER",
-  joinedAt: "2026-09-17",
-};
+export default async function ProfilPage() {
+  const session = await auth();
+  const userId = (session?.user as unknown as { id: string })?.id;
 
-const profileFields = [
-  { icon: User, label: "Nama Lengkap", value: user.name },
-  { icon: Mail, label: "Email", value: user.email },
-  { icon: Phone, label: "Telepon", value: user.phone },
-  { icon: Building2, label: "Instansi", value: user.instansi },
-  {
-    icon: Calendar,
-    label: "Tanggal Daftar",
-    value: new Date(user.joinedAt).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    }),
-  },
-];
+  if (!userId) return null;
 
-export default function ProfilPage() {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { profile: true },
+  });
+
+  if (!user) return null;
+
+  const profileFields = [
+    { icon: User, label: "Nama Lengkap", value: user.name },
+    { icon: Mail, label: "Email", value: user.email },
+    { icon: Phone, label: "Telepon", value: user.phone || "-" },
+    { icon: Building2, label: "Instansi", value: user.profile?.instansi || user.instansi || "-" },
+    {
+      icon: Calendar,
+      label: "Tanggal Daftar",
+      value: formatDate(user.createdAt),
+    },
+  ];
+
   return (
     <div className="space-y-6">
       <div>
@@ -56,10 +56,9 @@ export default function ProfilPage() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Profile card */}
         <Card>
           <CardContent className="pt-6 text-center">
-            <Avatar size="xl" fallback="U" className="mx-auto" />
+            <Avatar size="xl" fallback={getInitials(user.name)} className="mx-auto" />
             <h2 className="text-xl font-bold text-foreground mt-4">
               {user.name}
             </h2>
@@ -76,7 +75,6 @@ export default function ProfilPage() {
           </CardContent>
         </Card>
 
-        {/* Details */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Detail Akun</CardTitle>

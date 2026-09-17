@@ -1,5 +1,4 @@
-import { Search, User, FileText } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { User, FileText } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -8,46 +7,21 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { getAuditLogs, formatDateTime } from "@/lib/db-queries";
 
-const logs = [
-  {
-    id: "1",
-    action: "LOGIN",
-    user: "admin@bdi-makassar.go.id",
-    target: "Auth",
-    details: "Login berhasil",
-    timestamp: "2026-09-17 09:00:00",
-  },
-  {
-    id: "2",
-    action: "CREATE",
-    user: "admin@bdi-makassar.go.id",
-    target: "Layanan",
-    details: "Menambah layanan baru",
-    timestamp: "2026-09-17 09:15:00",
-  },
-  {
-    id: "3",
-    action: "UPDATE",
-    user: "operator@bdi-makassar.go.id",
-    target: "Permohonan",
-    details: "Status diubah ke UNDER_REVIEW",
-    timestamp: "2026-09-17 10:00:00",
-  },
-];
-
-const actionVariant: Record<
-  string,
-  "default" | "secondary" | "info" | "success" | "warning" | "destructive"
-> = {
+const actionVariant: Record<string, "default" | "secondary" | "info" | "success" | "warning" | "destructive"> = {
   LOGIN: "info",
   LOGOUT: "secondary",
   CREATE: "success",
   UPDATE: "warning",
   DELETE: "destructive",
+  STATUS_CHANGE: "info",
+  VERIFY_PAYMENT: "success",
 };
 
-export default function AuditLogPage() {
+export default async function AuditLogPage() {
+  const logs = await getAuditLogs();
+
   return (
     <div className="space-y-6">
       <div>
@@ -59,11 +33,7 @@ export default function AuditLogPage() {
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-base">Log Aktivitas</CardTitle>
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Cari log..." className="pl-9" />
-          </div>
+          <CardTitle className="text-base">Log Aktivitas ({logs.length})</CardTitle>
         </CardHeader>
         <CardContent>
           {logs.length === 0 ? (
@@ -91,17 +61,20 @@ export default function AuditLogPage() {
                         {log.action}
                       </Badge>
                       <span className="text-xs text-muted-foreground font-mono">
-                        {log.timestamp}
+                        {formatDateTime(log.createdAt)}
                       </span>
                     </div>
                     <p className="text-sm text-foreground mt-1">
-                      <span className="font-medium">{log.user}</span>
+                      <span className="font-medium">{log.user?.name || log.user?.email || "System"}</span>
                       {" — "}
-                      {log.target}
+                      {log.entity}
+                      {log.entityId && ` (${log.entityId.slice(0, 8)}...)`}
                     </p>
-                    <p className="text-sm text-muted-foreground mt-0.5">
-                      {log.details}
-                    </p>
+                    {log.newData && (
+                      <p className="text-sm text-muted-foreground mt-0.5 font-mono text-xs">
+                        {JSON.stringify(log.newData)}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
