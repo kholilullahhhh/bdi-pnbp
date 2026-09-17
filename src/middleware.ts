@@ -46,15 +46,6 @@ export default auth((req) => {
       );
     }
 
-    if (pathname.startsWith("/api/admin")) {
-      if (!hasAccess(userRole, "OPERATOR")) {
-        return NextResponse.json(
-          { error: "Forbidden" },
-          { status: 403 }
-        );
-      }
-    }
-
     if (pathname.startsWith("/api/applications")) {
       if (!hasAccess(userRole, "USER")) {
         return NextResponse.json(
@@ -88,20 +79,9 @@ export default auth((req) => {
     }
   }
 
-  if (pathname.startsWith("/admin")) {
-    if (!session?.user) {
-      const loginUrl = new URL("/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-    if (!hasAccess(userRole, "ADMIN")) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
-  }
-
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/admin/:path*", "/api/applications/:path*", "/api/payments/:path*"],
+  matcher: ["/dashboard/:path*", "/api/applications/:path*", "/api/payments/:path*"],
 };

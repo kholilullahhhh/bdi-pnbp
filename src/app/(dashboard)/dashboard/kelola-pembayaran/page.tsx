@@ -1,34 +1,39 @@
-import { Eye, FileText } from "lucide-react";
+import { Eye, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getApplications, getStatusLabel, getStatusVariant, formatDateShort } from "@/lib/db-queries";
+import { getPayments, getStatusLabel, getStatusVariant, formatCurrency, formatDateShort } from "@/lib/db-queries";
 
-export default async function AdminPermohonanPage() {
-  const applications = await getApplications();
+export default async function KelolaPembayaranPage() {
+  const payments = await getPayments();
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">
-          Manajemen Permohonan
+          Manajemen Pembayaran
         </h1>
         <p className="text-muted-foreground mt-1">
-          Kelola dan verifikasi permohonan layanan
+          Kelola dan verifikasi pembayaran
         </p>
       </div>
 
       <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Daftar Pembayaran ({payments.length})</CardTitle>
+        </CardHeader>
         <CardContent className="p-0">
-          {applications.length === 0 ? (
+          {payments.length === 0 ? (
             <EmptyState
-              icon={<FileText className="h-8 w-8" />}
-              title="Tidak ada permohonan"
-              description="Belum ada permohonan yang diajukan."
+              icon={<CreditCard className="h-8 w-8" />}
+              title="Belum ada pembayaran"
+              description="Data pembayaran akan muncul di sini."
             />
           ) : (
             <div className="overflow-x-auto">
@@ -36,7 +41,7 @@ export default async function AdminPermohonanPage() {
                 <thead>
                   <tr className="border-b border-border bg-surface">
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-                      Nomor
+                      Referensi
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Pemohon
@@ -45,10 +50,13 @@ export default async function AdminPermohonanPage() {
                       Layanan
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-                      Tanggal
+                      Jumlah
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Status
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Tanggal
                     </th>
                     <th className="text-right py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Aksi
@@ -56,27 +64,30 @@ export default async function AdminPermohonanPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {applications.map((app) => (
+                  {payments.map((p) => (
                     <tr
-                      key={app.id}
+                      key={p.id}
                       className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
                     >
                       <td className="py-3.5 px-4 font-mono text-xs text-foreground">
-                        {app.applicationNumber}
+                        {p.paymentNumber}
                       </td>
                       <td className="py-3.5 px-4 font-medium text-foreground">
-                        {app.user.name}
+                        {p.invoice.application.user?.name || "-"}
                       </td>
                       <td className="py-3.5 px-4 text-muted-foreground">
-                        {app.serviceName}
+                        {p.invoice.application.serviceName}
                       </td>
-                      <td className="py-3.5 px-4 text-muted-foreground">
-                        {formatDateShort(app.createdAt)}
+                      <td className="py-3.5 px-4 font-medium font-mono text-xs">
+                        {formatCurrency(Number(p.amount))}
                       </td>
                       <td className="py-3.5 px-4">
-                        <Badge variant={getStatusVariant(app.status)}>
-                          {getStatusLabel(app.status)}
+                        <Badge variant={getStatusVariant(p.status)}>
+                          {getStatusLabel(p.status)}
                         </Badge>
+                      </td>
+                      <td className="py-3.5 px-4 text-muted-foreground">
+                        {formatDateShort(p.createdAt)}
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <Button variant="ghost" size="icon" aria-label="Lihat detail">

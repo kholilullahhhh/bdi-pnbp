@@ -2,7 +2,7 @@ import { getTariffs } from "@/lib/db-queries";
 import { prisma } from "@/lib/prisma";
 import { TariffTable } from "@/components/admin/tariff-table";
 
-export default async function AdminTarifPage() {
+export default async function TarifPage() {
   const [tariffs, services] = await Promise.all([
     getTariffs(),
     prisma.service.findMany({ select: { id: true, name: true }, orderBy: { sortOrder: "asc" } }),

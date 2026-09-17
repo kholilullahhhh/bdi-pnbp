@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
-import { signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import {
   LayoutDashboard,
   FileText,
@@ -16,11 +16,19 @@ import {
   Building2,
   ChevronLeft,
   Layers,
+  DollarSign,
+  Users,
+  Megaphone,
+  HelpCircle,
+  BarChart3,
+  ClipboardList,
+  Settings,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { UserBadge } from "./user-badge";
 
-const items = [
+const userItems = [
   { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { title: "Layanan", href: "/dashboard/layanan", icon: Layers },
   { title: "Permohonan", href: "/dashboard/permohonan", icon: FileText },
@@ -29,9 +37,26 @@ const items = [
   { title: "Profil", href: "/dashboard/profil", icon: User },
 ];
 
+const adminItems = [
+  { title: "Kelola Layanan", href: "/dashboard/layanan", icon: Layers },
+  { title: "Kelola Tarif", href: "/dashboard/tarif", icon: DollarSign },
+  { title: "Kelola Permohonan", href: "/dashboard/kelola-permohonan", icon: FileText },
+  { title: "Kelola Pembayaran", href: "/dashboard/kelola-pembayaran", icon: CreditCard },
+  { title: "Pengguna", href: "/dashboard/pengguna", icon: Users },
+  { title: "Pengumuman", href: "/dashboard/pengumuman", icon: Megaphone },
+  { title: "FAQ", href: "/dashboard/faq", icon: HelpCircle },
+  { title: "Laporan", href: "/dashboard/laporan", icon: BarChart3 },
+  { title: "Audit Log", href: "/dashboard/audit-log", icon: ClipboardList },
+  { title: "Pengaturan", href: "/dashboard/pengaturan", icon: Settings },
+];
+
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session } = useSession();
+  const userRole = (session?.user as unknown as { role: string })?.role ?? "USER";
+  const isAdmin = ["ADMIN", "SUPER_ADMIN", "OPERATOR"].includes(userRole);
+
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -117,32 +142,79 @@ export function DashboardSidebar() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-2.5 space-y-0.5 overflow-y-auto" aria-label="Navigasi dashboard">
-            {items.map((item) => {
-              const active =
-                pathname === item.href ||
-                (item.href !== "/dashboard" &&
-                  pathname?.startsWith(item.href));
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                    active
-                      ? "bg-primary-50 text-primary-700"
-                      : "text-muted-foreground hover:bg-surface-alt hover:text-foreground",
-                    collapsed && "justify-center px-2"
-                  )}
-                  aria-current={active ? "page" : undefined}
-                  onClick={() => setMobileOpen(false)}
-                  title={collapsed ? item.title : undefined}
-                >
-                  <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-                  {!collapsed && <span>{item.title}</span>}
-                </Link>
-              );
-            })}
+          <nav className="flex-1 p-2.5 space-y-4 overflow-y-auto" aria-label="Navigasi dashboard">
+            {/* User menu */}
+            <div>
+              {!collapsed && (
+                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  Menu
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {userItems.map((item) => {
+                  const active =
+                    pathname === item.href ||
+                    (item.href !== "/dashboard" &&
+                      pathname?.startsWith(item.href));
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={cn(
+                        "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                        active
+                          ? "bg-primary-50 text-primary-700"
+                          : "text-muted-foreground hover:bg-surface-alt hover:text-foreground",
+                        collapsed && "justify-center px-2"
+                      )}
+                      aria-current={active ? "page" : undefined}
+                      onClick={() => setMobileOpen(false)}
+                      title={collapsed ? item.title : undefined}
+                    >
+                      <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+                      {!collapsed && <span>{item.title}</span>}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Admin menu */}
+            {isAdmin && (
+              <div>
+                {!collapsed && (
+                  <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+                    <Shield className="h-3 w-3" /> Admin
+                  </p>
+                )}
+                <div className="space-y-0.5">
+                  {adminItems.map((item) => {
+                    const active =
+                      pathname === item.href ||
+                      pathname?.startsWith(item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                          active
+                            ? "bg-primary-50 text-primary-700"
+                            : "text-muted-foreground hover:bg-surface-alt hover:text-foreground",
+                          collapsed && "justify-center px-2"
+                        )}
+                        aria-current={active ? "page" : undefined}
+                        onClick={() => setMobileOpen(false)}
+                        title={collapsed ? item.title : undefined}
+                      >
+                        <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+                        {!collapsed && <span>{item.title}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </nav>
 
           {/* User & logout */}
