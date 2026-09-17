@@ -76,7 +76,7 @@ export async function PATCH(
 
     // Check payment requirement
     if (transition.requiresPayment) {
-      if (application.paymentStatus === "AWAITING_PAYMENT" || application.paymentStatus === "NOT_APPLICABLE") {
+      if (application.paymentStatus === "AWAITING_PAYMENT") {
         return NextResponse.json(
           { error: "Pembayaran belum lunas. Verifikasi pembayaran terlebih dahulu." },
           { status: 400 }

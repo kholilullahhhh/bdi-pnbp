@@ -252,6 +252,30 @@ async function main() {
   }
   console.log("✅ FAQs created");
 
+  // Seed system settings
+  const systemSettings = [
+    { key: "institution.name", value: "Balai Diklat Industri Makassar", group: "institution" },
+    { key: "institution.shortName", value: "BDI Makassar", group: "institution" },
+    { key: "institution.ministry", value: "Kementerian Perindustrian RI", group: "institution" },
+    { key: "website.main", value: "bdimakassar.kemenperin.go.id", group: "website" },
+    { key: "website.alt", value: "bdimakassar.id", group: "website" },
+    { key: "website.sidia", value: "sidia.kemenperin.go.id", group: "website" },
+    { key: "contact.email", value: "bdimks.kemenperin@gmail.com", group: "contact" },
+    { key: "contact.phone", value: "0411-556617", group: "contact" },
+    { key: "contact.whatsapp", value: "0822-9331-9335", group: "contact" },
+    { key: "notifications.emailEnabled", value: "true", group: "notifications" },
+    { key: "notifications.autoEnabled", value: "false", group: "notifications" },
+  ];
+
+  for (const setting of systemSettings) {
+    await prisma.systemSetting.upsert({
+      where: { key: setting.key },
+      update: { value: setting.value },
+      create: setting,
+    });
+  }
+  console.log("✅ System settings seeded");
+
   console.log("🎉 Seeding completed!");
 }
 

@@ -71,7 +71,6 @@ const actionConfig: Record<string, {
 
 interface QuickStatusActionProps {
   applicationId: string;
-  currentStatus: string;
   validTransitions: string[];
 }
 

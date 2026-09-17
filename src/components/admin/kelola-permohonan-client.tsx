@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, FileText, Clock, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { FileText, Clock, AlertCircle, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getStatusLabel, getStatusVariant, formatDateShort } from "@/lib/utils";
 
@@ -26,7 +26,11 @@ const statusTabs = [
   { key: "REJECTED", label: "Ditolak" },
 ];
 
-export function KelolaPermohonanClient({ applications }: { applications: ApplicationRow[] }) {
+export function KelolaPermohonanClient({
+  applications,
+}: {
+  applications: ApplicationRow[];
+}) {
   const [activeTab, setActiveTab] = useState("ALL");
   const [search, setSearch] = useState("");
 
@@ -45,7 +49,6 @@ export function KelolaPermohonanClient({ applications }: { applications: Applica
 
   return (
     <div className="space-y-6">
-      {/* Work Queue Summary */}
       {(pendingCount > 0 || reviewCount > 0) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {pendingCount > 0 && (
@@ -73,7 +76,6 @@ export function KelolaPermohonanClient({ applications }: { applications: Applica
         </div>
       )}
 
-      {/* Search */}
       <div>
         <Input
           placeholder="Cari nomor, pemohon, atau layanan..."
@@ -83,7 +85,6 @@ export function KelolaPermohonanClient({ applications }: { applications: Applica
         />
       </div>
 
-      {/* Status Tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {statusTabs.map((tab) => {
           const count = tab.key === "ALL" ? applications.length : applications.filter((a) => a.status === tab.key).length;
@@ -105,7 +106,6 @@ export function KelolaPermohonanClient({ applications }: { applications: Applica
         })}
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-xl border border-border overflow-hidden">
         {filtered.length === 0 ? (
           <div className="p-12 text-center">
@@ -129,20 +129,20 @@ export function KelolaPermohonanClient({ applications }: { applications: Applica
               </thead>
               <tbody>
                 {filtered.map((app) => (
-                  <tr key={app.id} className="border-b border-border/60 last:border-0 hover:bg-primary-50/30 transition-colors group">
-                    <td className="py-3.5 px-4 font-mono text-xs text-foreground">{app.applicationNumber}</td>
-                    <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary-800 transition-colors">{app.user.name}</td>
-                    <td className="py-3.5 px-4 text-muted-foreground">{app.serviceName}</td>
-                    <td className="py-3.5 px-4 text-muted-foreground">{formatDateShort(app.createdAt)}</td>
-                    <td className="py-3.5 px-4"><Badge variant={getStatusVariant(app.status)}>{getStatusLabel(app.status)}</Badge></td>
-                    <td className="py-3.5 px-4 text-right">
-                      <Link href={`/dashboard/kelola-permohonan/${app.id}`}>
-                        <Button variant="ghost" size="icon" aria-label="Lihat detail" className="text-muted-foreground hover:text-primary-700">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
+                    <tr key={app.id} className="border-b border-border/60 last:border-0 hover:bg-primary-50/30 transition-colors group">
+                      <td className="py-3.5 px-4 font-mono text-xs text-foreground">{app.applicationNumber}</td>
+                      <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary-800 transition-colors">{app.user.name}</td>
+                      <td className="py-3.5 px-4 text-muted-foreground">{app.serviceName}</td>
+                      <td className="py-3.5 px-4 text-muted-foreground">{formatDateShort(app.createdAt)}</td>
+                      <td className="py-3.5 px-4"><Badge variant={getStatusVariant(app.status)}>{getStatusLabel(app.status)}</Badge></td>
+                      <td className="py-3.5 px-4 text-right">
+                        <Link href={`/dashboard/kelola-permohonan/${app.id}`}>
+                          <Button variant="ghost" size="icon" aria-label="Lihat detail" className="text-muted-foreground hover:text-primary-700">
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
                 ))}
               </tbody>
             </table>

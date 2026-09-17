@@ -41,8 +41,14 @@ PowerShell requires `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 
 ```
 src/app/
-  page.tsx                    # Landing page (server component)
+  page.tsx                    # Landing page (server component, DB-backed services)
   (public)/                   # Public pages: /layanan, /faq, /kontak, etc.
+    layanan/page.tsx          # DB-backed service listing (server + client search)
+    layanan/[slug]/page.tsx   # Service detail page (DB)
+    layanan/[slug]/ajukan/    # Application form (auth-gated, server + client)
+    faq/page.tsx              # FAQ from DB (server)
+    login/page.tsx            # Server wrapper with Suspense
+    login/login-form.tsx      # Client form with callbackUrl support
   (dashboard)/
     layout.tsx                # Dashboard shell (sidebar + header)
     dashboard/
@@ -55,15 +61,16 @@ src/app/
       profil/page.tsx         # User profile (edit name, phone, password change)
       tarif/page.tsx          # Tariff management
       kelola-permohonan/      # Admin: all applications (status filters, work queue)
-      kelola-permohonan/[id]/page.tsx # Admin application detail (actions, timeline)
+      kelola-permohonan/[id]/page.tsx # Admin application detail (timeline, ApplicationActions)
       kelola-pembayaran/      # Admin: all payments (verify/reject actions)
       pengguna/page.tsx       # User management
       pengumuman/page.tsx     # Announcements CRUD
       faq/page.tsx            # FAQ CRUD
       laporan/page.tsx        # Reports/stats
       audit-log/page.tsx      # Audit logs
-      pengaturan/page.tsx     # System settings (client component)
+      pengaturan/page.tsx     # System settings (server + client, DB-backed)
   api/                        # API routes (services, tariffs, applications, payments, etc.)
+    settings/route.ts         # GET/PUT system settings (ADMIN+)
 ```
 
 ## Layout Components
@@ -81,6 +88,8 @@ src/app/
 - `src/components/dashboard/permohonan-client.tsx` — User's application list with search + status filter tabs
 - `src/components/admin/kelola-permohonan-client.tsx` — Admin application list with status tabs, work queue summary, search
 - `src/components/admin/payment-verify-actions.tsx` — Payment verify/reject buttons with confirmation dialog
+- `src/components/admin/quick-status-action.tsx` — Inline status action buttons for admin list view (with confirmation dialog)
+- `src/components/admin/settings-client.tsx` — Settings form (institution, website, contact, notifications) with DB persistence
 
 ## Auth Helpers
 
@@ -104,6 +113,8 @@ src/app/
 
 Default seed accounts: `admin@bdi-makassar.go.id` / `admin123`, `operator@` / `operator123`, `user@contoh.com` / `user123`
 
+Seed also creates: services, tariffs, categories, FAQs, announcements, and system settings (institution, website, contact, notifications).
+
 ## API Routes
 
 All under `src/app/api/`:
@@ -116,6 +127,7 @@ All under `src/app/api/`:
 - `payments`, `payments/[id]` — Payment CRUD (amount validation, duplicate PENDING guard)
 - `payments/[id]/verify` — Atomic payment verification (prisma.$transaction, creates notifications)
 - `notifications/unread-count` — Unread notification count for bell badge
+- `settings` — GET/PUT system settings (ADMIN+, upserts by key)
 - `categories`, `faqs`, `announcements`, `users` — Content/user endpoints
 - `users/[id]` — GET/PUT (admin), PATCH (self-service profile + password change)
 - Middleware allows unauthenticated GET on `/api/services`, `/api/categories`, `/api/faqs`, `/api/announcements`
