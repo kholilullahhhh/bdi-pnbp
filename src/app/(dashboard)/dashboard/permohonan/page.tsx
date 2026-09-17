@@ -2,74 +2,174 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { FileText, Search, Plus, Eye, Download } from "lucide-react";
+import {
+  FileText,
+  Search,
+  Plus,
+  Eye,
+  Download,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { formatCurrency, getStatusColor, getStatusLabel } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/empty-state";
+import {
+  getStatusLabel,
+  getStatusVariant,
+  formatDateShort,
+} from "@/lib/utils";
 
-const applications = [
-  { id: "PNBP-202609-0001", serviceName: "Wisata Edukasi Cokelat", status: "SUBMITTED", date: "2026-09-17", amount: 1000000 },
-  { id: "PNBP-202609-0002", serviceName: "Pelatihan Penyelia Halal", status: "COMPLETED", date: "2026-09-16", amount: 500000 },
+const applications: {
+  id: string;
+  serviceName: string;
+  status: string;
+  date: string;
+  amount: number;
+}[] = [];
+
+const statusFilters = [
+  { label: "Semua", value: "ALL" },
+  { label: "Diajukan", value: "SUBMITTED" },
+  { label: "Diproses", value: "UNDER_REVIEW" },
+  { label: "Selesai", value: "COMPLETED" },
 ];
 
 export default function PermohonanPage() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+
+  const filtered = applications.filter(
+    (a) =>
+      (statusFilter === "ALL" || a.status === statusFilter) &&
+      (!search ||
+        a.id.toLowerCase().includes(search.toLowerCase()) ||
+        a.serviceName.toLowerCase().includes(search.toLowerCase()))
+  );
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Permohonan Saya</h1>
-          <p className="text-gray-600">Daftar permohonan layanan PNBP</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            Permohonan Saya
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Daftar permohonan layanan PNBP
+          </p>
         </div>
-        <Link href="/layanan"><Button><Plus className="h-4 w-4 mr-2" />Ajukan Baru</Button></Link>
+        <Link href="/layanan">
+          <Button>
+            <Plus className="mr-1.5 h-4 w-4" />
+            Ajukan Baru
+          </Button>
+        </Link>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Cari nomor atau nama layanan..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <div className="flex gap-1.5 bg-surface p-1 rounded-lg border border-border">
+          {statusFilters.map((f) => (
+            <button
+              key={f.value}
+              type="button"
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                statusFilter === f.value
+                  ? "bg-white text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={() => setStatusFilter(f.value)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Riwayat Permohonan</CardTitle>
-            <div className="relative w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input placeholder="Cari nomor permohonan..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-9" />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Nomor</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Layanan</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Tanggal</th>
-                <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
-                <th className="text-right py-3 px-4 font-medium text-gray-600">Aksi</th>
-              </tr></thead>
-              <tbody>
-                {applications.length === 0 ? (
-                  <tr><td colSpan={5} className="py-12 text-center text-gray-500">
-                    <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                    Belum ada permohonan
-                  </td></tr>
-                ) : (
-                  applications.map((app) => (
-                    <tr key={app.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-3 px-4 font-mono text-xs">{app.id}</td>
-                      <td className="py-3 px-4">{app.serviceName}</td>
-                      <td className="py-3 px-4 text-gray-600">{new Date(app.date).toLocaleDateString("id-ID")}</td>
-                      <td className="py-3 px-4"><Badge className={getStatusColor(app.status)}>{getStatusLabel(app.status)}</Badge></td>
-                      <td className="py-3 px-4 text-right">
-                        <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
-                        {app.status === "COMPLETED" && <Button variant="ghost" size="icon"><Download className="h-4 w-4" /></Button>}
+        <CardContent className="p-0">
+          {filtered.length === 0 ? (
+            <EmptyState
+              icon={<FileText className="h-8 w-8" />}
+              title="Belum ada permohonan"
+              description="Ajukan permohonan layanan PNBP pertama Anda."
+              action={
+                <Link href="/layanan">
+                  <Button>
+                    <Plus className="mr-1.5 h-4 w-4" />
+                    Ajukan Permohonan
+                  </Button>
+                </Link>
+              }
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-surface">
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Nomor
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Layanan
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Tanggal
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Status
+                    </th>
+                    <th className="text-right py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Aksi
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map((app) => (
+                    <tr
+                      key={app.id}
+                      className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
+                    >
+                      <td className="py-3.5 px-4 font-mono text-xs text-foreground">
+                        {app.id}
+                      </td>
+                      <td className="py-3.5 px-4 font-medium text-foreground">
+                        {app.serviceName}
+                      </td>
+                      <td className="py-3.5 px-4 text-muted-foreground">
+                        {formatDateShort(app.date)}
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <Badge variant={getStatusVariant(app.status)}>
+                          {getStatusLabel(app.status)}
+                        </Badge>
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        <Button variant="ghost" size="icon" aria-label="Lihat detail">
+                          <Eye className="h-4 w-4" />
+                        </Button>
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

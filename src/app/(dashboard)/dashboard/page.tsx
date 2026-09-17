@@ -1,114 +1,175 @@
+import Link from "next/link";
 import {
   FileText,
   CreditCard,
   Clock,
   CheckCircle2,
+  ArrowRight,
   TrendingUp,
   AlertCircle,
+  Plus,
+  BookOpen,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { EmptyState } from "@/components/ui/empty-state";
 
 const stats = [
   {
     title: "Total Permohonan",
     value: "0",
     icon: FileText,
-    change: "+0 bulan ini",
-    changeType: "neutral",
+    description: "Semua permohonan yang pernah diajukan",
+    color: "text-primary-700",
+    bg: "bg-primary-50",
   },
   {
     title: "Menunggu Verifikasi",
     value: "0",
     icon: Clock,
-    change: "Perlu ditindaklanjuti",
-    changeType: "warning",
+    description: "Perlu ditindaklanjuti",
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+    highlight: true,
   },
   {
     title: "Selesai",
     value: "0",
     icon: CheckCircle2,
-    change: "Total selesai",
-    changeType: "success",
+    description: "Total permohonan selesai",
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
   },
   {
     title: "Total Pembayaran",
     value: "Rp 0",
     icon: CreditCard,
-    change: "Nilai terverifikasi",
-    changeType: "success",
+    description: "Nilai pembayaran terverifikasi",
+    color: "text-violet-600",
+    bg: "bg-violet-50",
   },
 ];
 
-const recentApplications = [
-  // Empty state - no applications yet
+const quickActions = [
+  {
+    title: "Lihat Layanan",
+    desc: "Jelajahi katalog layanan PNBP",
+    href: "/layanan",
+    icon: FileText,
+  },
+  {
+    title: "Panduan",
+    desc: "Pelajari cara menggunakan sistem",
+    href: "/panduan",
+    icon: BookOpen,
+  },
 ];
 
 export default function DashboardPage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
           Selamat datang di Sistem Informasi PNBP BDI Makassar
         </p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className="h-4 w-4 text-gray-400" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p
-                className={`text-xs mt-1 ${
-                  stat.changeType === "success"
-                    ? "text-green-600"
-                    : stat.changeType === "warning"
-                    ? "text-yellow-600"
-                    : "text-gray-500"
-                }`}
-              >
-                {stat.changeType === "warning" && (
-                  <AlertCircle className="inline h-3 w-3 mr-1" />
-                )}
-                {stat.changeType === "success" && (
-                  <TrendingUp className="inline h-3 w-3 mr-1" />
-                )}
-                {stat.change}
-              </p>
+          <Card
+            key={stat.title}
+            className={stat.highlight ? "border-amber-200 bg-amber-50/50" : ""}
+          >
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                    {stat.title}
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {stat.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {stat.description}
+                  </p>
+                </div>
+                <div
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.bg}`}
+                >
+                  <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Recent Applications */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Permohonan Terbaru</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {recentApplications.length === 0 ? (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">Belum ada permohonan</p>
-              <p className="text-sm text-gray-400 mt-1">
-                Mulai dengan melihat layanan yang tersedia
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {/* Application list would go here */}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* Recent & Quick Actions */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Recent applications */}
+        <Card className="lg:col-span-2">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Permohonan Terbaru</CardTitle>
+            <Link href="/dashboard/permohonan">
+              <Button variant="ghost" size="sm">
+                Lihat Semua
+                <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              </Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <EmptyState
+              icon={<FileText className="h-8 w-8" />}
+              title="Belum ada permohonan"
+              description="Mulai dengan melihat layanan yang tersedia dan ajukan permohonan pertama Anda."
+              action={
+                <Link href="/layanan">
+                  <Button size="sm">
+                    <Plus className="mr-1.5 h-3.5 w-3.5" />
+                    Ajukan Permohonan
+                  </Button>
+                </Link>
+              }
+            />
+          </CardContent>
+        </Card>
+
+        {/* Quick actions */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Akses Cepat</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {quickActions.map((a) => (
+              <Link key={a.title} href={a.href}>
+                <div className="flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary-200 hover:bg-primary-50/50 transition-all group cursor-pointer">
+                  <div className="w-9 h-9 bg-surface rounded-lg flex items-center justify-center group-hover:bg-primary-100 transition-colors">
+                    <a.icon className="h-4 w-4 text-muted-foreground group-hover:text-primary-700 transition-colors" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground group-hover:text-primary-700 transition-colors">
+                      {a.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {a.desc}
+                    </p>
+                  </div>
+                  <ArrowRight className="h-3.5 w-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </Link>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

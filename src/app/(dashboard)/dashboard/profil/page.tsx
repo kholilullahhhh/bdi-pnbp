@@ -1,9 +1,24 @@
 "use client";
 
-import { User, Mail, Phone, Building2, Calendar, Shield } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  User,
+  Mail,
+  Phone,
+  Building2,
+  Calendar,
+  Shield,
+  Edit,
+} from "lucide-react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 const user = {
   name: "User Demo",
@@ -14,37 +29,79 @@ const user = {
   joinedAt: "2026-09-17",
 };
 
+const profileFields = [
+  { icon: User, label: "Nama Lengkap", value: user.name },
+  { icon: Mail, label: "Email", value: user.email },
+  { icon: Phone, label: "Telepon", value: user.phone },
+  { icon: Building2, label: "Instansi", value: user.instansi },
+  {
+    icon: Calendar,
+    label: "Tanggal Daftar",
+    value: new Date(user.joinedAt).toLocaleDateString("id-ID", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+  },
+];
+
 export default function ProfilPage() {
   return (
     <div className="space-y-6">
-      <div><h1 className="text-2xl font-bold text-gray-900">Profil Saya</h1><p className="text-gray-600">Informasi akun Anda</p></div>
+      <div>
+        <h1 className="text-2xl font-bold text-foreground">Profil Saya</h1>
+        <p className="text-muted-foreground mt-1">
+          Informasi akun dan pengaturan profil
+        </p>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1">
+        {/* Profile card */}
+        <Card>
           <CardContent className="pt-6 text-center">
-            <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"><User className="h-10 w-10 text-blue-600" /></div>
-            <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
-            <p className="text-sm text-gray-600 mt-1">{user.email}</p>
-            <Badge className="mt-3">{user.role}</Badge>
+            <Avatar size="xl" fallback="U" className="mx-auto" />
+            <h2 className="text-xl font-bold text-foreground mt-4">
+              {user.name}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1">{user.email}</p>
+            <Badge className="mt-3">
+              <Shield className="h-3 w-3 mr-1" />
+              {user.role}
+            </Badge>
+            <Separator className="my-5" />
+            <Button variant="outline" className="w-full">
+              <Edit className="mr-1.5 h-4 w-4" />
+              Edit Profil
+            </Button>
           </CardContent>
         </Card>
 
+        {/* Details */}
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle>Detail Akun</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
-            {[
-              { icon: User, label: "Nama Lengkap", value: user.name },
-              { icon: Mail, label: "Email", value: user.email },
-              { icon: Phone, label: "Telepon", value: user.phone },
-              { icon: Building2, label: "Instansi", value: user.instansi },
-              { icon: Calendar, label: "Tanggal Daftar", value: new Date(user.joinedAt).toLocaleDateString("id-ID") },
-            ].map((item) => (
-              <div key={item.label} className="flex items-center gap-4 py-2 border-b border-gray-100 last:border-0">
-                <item.icon className="h-5 w-5 text-gray-400 flex-shrink-0" />
-                <div><p className="text-xs text-gray-500">{item.label}</p><p className="text-sm font-medium text-gray-900">{item.value}</p></div>
-              </div>
-            ))}
-            <Button variant="outline">Edit Profil</Button>
+          <CardHeader>
+            <CardTitle>Detail Akun</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-0">
+              {profileFields.map((field, i) => (
+                <div key={field.label}>
+                  <div className="flex items-center gap-4 py-3.5">
+                    <div className="w-9 h-9 bg-surface rounded-lg flex items-center justify-center flex-shrink-0">
+                      <field.icon className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs text-muted-foreground">
+                        {field.label}
+                      </p>
+                      <p className="text-sm font-medium text-foreground mt-0.5">
+                        {field.value}
+                      </p>
+                    </div>
+                  </div>
+                  {i < profileFields.length - 1 && <Separator />}
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

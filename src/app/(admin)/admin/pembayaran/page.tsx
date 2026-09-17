@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Eye, FileText } from "lucide-react";
+import { Search, Eye, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -12,99 +12,57 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getStatusLabel, getStatusVariant, formatDateShort } from "@/lib/utils";
+import {
+  getStatusLabel,
+  getStatusVariant,
+  formatCurrency,
+  formatDateShort,
+} from "@/lib/utils";
 
-const mockApplications = [
+const mockPayments = [
   {
-    id: "PNBP-202609-0001",
+    id: "PAY-001",
     user: "Budi Santoso",
     service: "Wisata Edukasi Cokelat",
-    status: "SUBMITTED",
+    amount: 1000000,
+    status: "PENDING",
     date: "2026-09-17",
   },
-  {
-    id: "PNBP-202609-0002",
-    user: "PT Maju Jaya",
-    service: "Pelatihan Penyelia Halal",
-    status: "UNDER_REVIEW",
-    date: "2026-09-16",
-  },
-  {
-    id: "PNBP-202609-0003",
-    user: "SMA Negeri 1 Makassar",
-    service: "Wisata Edukasi Cokelat",
-    status: "COMPLETED",
-    date: "2026-09-15",
-  },
 ];
 
-const statusFilters = [
-  { label: "Semua", value: "ALL" },
-  { label: "Diajukan", value: "SUBMITTED" },
-  { label: "Diproses", value: "UNDER_REVIEW" },
-  { label: "Selesai", value: "COMPLETED" },
-];
-
-export default function AdminPermohonanPage() {
+export default function AdminPembayaranPage() {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("ALL");
-
-  const filtered = mockApplications.filter(
-    (a) =>
-      (statusFilter === "ALL" || a.status === statusFilter) &&
-      (!search ||
-        a.id.toLowerCase().includes(search.toLowerCase()) ||
-        a.user.toLowerCase().includes(search.toLowerCase()) ||
-        a.service.toLowerCase().includes(search.toLowerCase()))
-  );
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">
-          Manajemen Permohonan
+          Manajemen Pembayaran
         </h1>
         <p className="text-muted-foreground mt-1">
-          Kelola dan verifikasi permohonan layanan
+          Kelola dan verifikasi pembayaran
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Cari nomor, nama, atau layanan..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <div className="flex gap-1.5 bg-surface p-1 rounded-lg border border-border">
-          {statusFilters.map((f) => (
-            <button
-              key={f.value}
-              type="button"
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                statusFilter === f.value
-                  ? "bg-white text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-              onClick={() => setStatusFilter(f.value)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Daftar Pembayaran</CardTitle>
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Cari referensi atau pemohon..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+        </CardHeader>
         <CardContent className="p-0">
-          {filtered.length === 0 ? (
+          {mockPayments.length === 0 ? (
             <EmptyState
-              icon={<FileText className="h-8 w-8" />}
-              title="Tidak ada permohonan"
-              description="Tidak ada permohonan yang cocok dengan filter Anda."
+              icon={<CreditCard className="h-8 w-8" />}
+              title="Belum ada pembayaran"
+              description="Data pembayaran akan muncul di sini."
             />
           ) : (
             <div className="overflow-x-auto">
@@ -112,7 +70,7 @@ export default function AdminPermohonanPage() {
                 <thead>
                   <tr className="border-b border-border bg-surface">
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-                      Nomor
+                      Referensi
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Pemohon
@@ -121,10 +79,13 @@ export default function AdminPermohonanPage() {
                       Layanan
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-                      Tanggal
+                      Jumlah
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Status
+                    </th>
+                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                      Tanggal
                     </th>
                     <th className="text-right py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                       Aksi
@@ -132,27 +93,30 @@ export default function AdminPermohonanPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((app) => (
+                  {mockPayments.map((p) => (
                     <tr
-                      key={app.id}
+                      key={p.id}
                       className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors"
                     >
                       <td className="py-3.5 px-4 font-mono text-xs text-foreground">
-                        {app.id}
+                        {p.id}
                       </td>
                       <td className="py-3.5 px-4 font-medium text-foreground">
-                        {app.user}
+                        {p.user}
                       </td>
                       <td className="py-3.5 px-4 text-muted-foreground">
-                        {app.service}
+                        {p.service}
                       </td>
-                      <td className="py-3.5 px-4 text-muted-foreground">
-                        {formatDateShort(app.date)}
+                      <td className="py-3.5 px-4 font-medium font-mono text-xs">
+                        {formatCurrency(p.amount)}
                       </td>
                       <td className="py-3.5 px-4">
-                        <Badge variant={getStatusVariant(app.status)}>
-                          {getStatusLabel(app.status)}
+                        <Badge variant={getStatusVariant(p.status)}>
+                          {getStatusLabel(p.status)}
                         </Badge>
+                      </td>
+                      <td className="py-3.5 px-4 text-muted-foreground">
+                        {formatDateShort(p.date)}
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <Button

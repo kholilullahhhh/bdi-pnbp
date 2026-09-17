@@ -1,34 +1,126 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
-import { BookOpen, CheckCircle2, HelpCircle } from "lucide-react";
+import { BookOpen, CheckCircle2, HelpCircle, ArrowRight } from "lucide-react";
 
 export default function PanduanPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <PublicNavbar />
       <main className="flex-1">
-        <section className="gradient-bg py-16">
-          <div className="max-w-7xl mx-auto px-4 text-center">
-            <BookOpen className="h-12 w-12 text-white/80 mx-auto mb-4" />
-            <h1 className="text-4xl font-bold text-white">Panduan Penggunaan</h1>
-            <p className="mt-4 text-lg text-white/80">Panduan menggunakan Sistem Informasi PNBP</p>
+        <section className="gradient-hero py-16 lg:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Badge className="bg-white/15 text-white border-white/20 mb-4">
+              Panduan
+            </Badge>
+            <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+              Panduan Penggunaan
+            </h1>
+            <p className="mt-4 text-lg text-primary-100/80 max-w-2xl mx-auto">
+              Panduan menggunakan Sistem Informasi PNBP BDI Makassar
+            </p>
           </div>
         </section>
-        <section className="py-16">
-          <div className="max-w-4xl mx-auto px-4 space-y-8">
+
+        <section className="py-16 lg:py-24">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             {[
-              { step: "1", title: "Akses Informasi Layanan", items: ["Kunjungi halaman Layanan", "Lihat deskripsi dan persyaratan", "Periksa tarif dan dasar hukum", "Pahami prosedur dan estimasi waktu"] },
-              { step: "2", title: "Buat Akun atau Masuk", items: ["Klik Daftar untuk akun baru", "Isi data diri dengan lengkap", "Gunakan email aktif"] },
-              { step: "3", title: "Ajukan Permohonan", items: ["Pilih layanan yang diinginkan", "Lengkapi data dan dokumen", "Submit permohonan"] },
-              { step: "4", title: "Pantau Status", items: ["Lihat status di Dashboard", "Terima notifikasi perubahan", "Lihat instruksi pembayaran"] },
+              {
+                step: "1",
+                title: "Akses Informasi Layanan",
+                items: [
+                  "Kunjungi halaman Layanan untuk melihat semua layanan tersedia",
+                  "Lihat deskripsi, persyaratan, dan estimasi waktu",
+                  "Periksa tarif dan dasar hukum yang berlaku",
+                  "Pahami prosedur untuk setiap jenis layanan",
+                ],
+              },
+              {
+                step: "2",
+                title: "Buat Akun atau Masuk",
+                items: [
+                  "Klik Daftar untuk membuat akun baru secara gratis",
+                  "Isi data diri dengan lengkap dan benar",
+                  "Gunakan email aktif untuk menerima notifikasi",
+                  "Jika sudah memiliki akun, langsung Masuk",
+                ],
+              },
+              {
+                step: "3",
+                title: "Ajukan Permohonan",
+                items: [
+                  "Pilih layanan yang sesuai kebutuhan Anda",
+                  "Lengkapi data dan unggah dokumen yang diperlukan",
+                  "Periksa kembali data sebelum mengirim",
+                  "Submit permohonan dan catat nomor referensi",
+                ],
+              },
+              {
+                step: "4",
+                title: "Pantau & Selesaikan",
+                items: [
+                  "Lihat status permohonan di Dashboard secara real-time",
+                  "Ikuti instruksi pembayaran jika diperlukan",
+                  "Unduh bukti pembayaran setelah verifikasi",
+                  "Selesaikan layanan dan berikan umpan balik",
+                ],
+              },
             ].map((s) => (
-              <Card key={s.step}>
-                <CardHeader><CardTitle className="flex items-center gap-3"><div className="w-8 h-8 bg-blue-800 text-white rounded-full flex items-center justify-center text-sm font-bold">{s.step}</div>{s.title}</CardTitle></CardHeader>
-                <CardContent><ul className="space-y-2 text-sm text-gray-600">{s.items.map((i) => <li key={i} className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" />{i}</li>)}</ul></CardContent>
+              <Card key={s.step} className="hover:shadow-md transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-primary-700 text-white rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 shadow-sm">
+                      {s.step}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-foreground mb-3">
+                        {s.title}
+                      </h3>
+                      <ul className="space-y-2">
+                        {s.items.map((item) => (
+                          <li
+                            key={item}
+                            className="flex items-start gap-2.5 text-sm text-muted-foreground"
+                          >
+                            <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
               </Card>
             ))}
-            <Card className="bg-gray-50"><CardHeader><CardTitle className="flex items-center gap-2"><HelpCircle className="h-5 w-5 text-blue-700" />Butuh Bantuan?</CardTitle></CardHeader><CardContent><p className="text-gray-600">Telepon: 0411-556617 | WhatsApp: 0822-9331-9335 | Email: bdimks.kemenperin@gmail.com</p></CardContent></Card>
+
+            <Card className="bg-surface border-border">
+              <CardContent className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <HelpCircle className="h-5 w-5 text-primary-700" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-foreground">Butuh Bantuan?</h3>
+                  <p className="text-sm text-muted-foreground mt-0.5">
+                    Telepon: 0411-556617 | WhatsApp: 0822-9331-9335 | Email:
+                    bdimks.kemenperin@gmail.com
+                  </p>
+                </div>
+                <Link href="/kontak">
+                  <Button variant="outline" size="sm">
+                    Hubungi Kami
+                    <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </section>
       </main>
