@@ -1,17 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { HelpCircle, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
+import { PageHero } from "@/components/landing/page-hero";
+import { cn } from "@/lib/utils";
 
 interface FAQ {
   id: string;
@@ -24,25 +19,33 @@ interface FAQ {
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className={`border rounded-xl overflow-hidden transition-colors ${open ? "border-primary-200 bg-primary-50/30" : "border-border"}`}>
+    <div
+      className={cn(
+        "border rounded-xl overflow-hidden transition-colors",
+        open ? "border-primary-200 bg-primary-50/30" : "border-border/60 hover:border-primary/20"
+      )}
+    >
       <button
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-primary-50/50 transition-colors"
+        type="button"
+        className="w-full flex items-center justify-between p-5 text-left hover:bg-primary-50/50 transition-colors"
         onClick={() => setOpen(!open)}
         aria-expanded={open}
       >
-        <span className="font-medium text-foreground pr-4">{q}</span>
-        {open ? (
-          <ChevronUp className="h-5 w-5 text-primary-600 flex-shrink-0" />
-        ) : (
-          <ChevronDown className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-        )}
+        <span className="text-sm font-semibold text-foreground pr-4">{q}</span>
+        <ChevronDown
+          className={cn(
+            "h-5 w-5 text-muted-foreground flex-shrink-0 transition-transform duration-200",
+            open && "rotate-180 text-primary-600"
+          )}
+        />
       </button>
       <div
-        className={`overflow-hidden transition-all duration-200 ${
+        className={cn(
+          "overflow-hidden transition-all duration-300",
           open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
-        }`}
+        )}
       >
-        <div className="px-4 pb-4 text-sm text-muted-foreground leading-relaxed">
+        <div className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed border-t border-border/40 pt-4">
           {a}
         </div>
       </div>
@@ -76,33 +79,22 @@ export function FAQClient({ faqs }: { faqs: FAQ[] }) {
     <div className="min-h-screen flex flex-col">
       <PublicNavbar />
       <main className="flex-1">
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 py-16 lg:py-20">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="bg-white/10 text-primary-100 hover:bg-white/20 backdrop-blur-md border-white/20 mb-4">
-              FAQ
-            </Badge>
-            <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-              Pertanyaan yang Sering Diajukan
-            </h1>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none">
-            <svg className="relative block w-full h-8 sm:h-12 text-background" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="currentColor">
-              <path d="M0,0 C150,90 350,-40 500,65 C650,170 900,10 1200,40 L1200,120 L0,120 Z"></path>
-            </svg>
-          </div>
-        </section>
+        <PageHero
+          title="Pertanyaan yang Sering Diajukan"
+          badge="FAQ"
+          imageAlt="FAQ layanan PNBP"
+        />
 
-        <section className="py-16 lg:py-24">
+        <section className="py-16 lg:py-24 bg-white">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-8">
-              <Input
-                placeholder="Cari pertanyaan..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="max-w-md border-primary-200 focus-visible:ring-primary-500"
-              />
+              <div className="relative max-w-md">
+                <Input
+                  placeholder="Cari pertanyaan..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="space-y-10">
@@ -133,30 +125,26 @@ export function FAQClient({ faqs }: { faqs: FAQ[] }) {
               )}
             </div>
 
-            <Card className="mt-12 border-primary-200 shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <div className="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center">
-                    <HelpCircle className="h-4.5 w-4.5 text-primary-700" />
-                  </div>
-                  Ada pertanyaan lain?
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Hubungi kami: Telepon{" "}
-                  <span className="font-medium text-foreground">0411-556617</span>{" "}
-                  | WhatsApp{" "}
-                  <span className="font-medium text-foreground">
-                    0822-9331-9335
-                  </span>{" "}
-                  | Email{" "}
-                  <span className="font-medium text-foreground">
-                    bdimks.kemenperin@gmail.com
-                  </span>
-                </p>
-              </CardContent>
-            </Card>
+            <div className="mt-12 bg-primary-50 border border-primary-200 rounded-2xl p-6 lg:p-8">
+              <h3 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+                <div className="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center">
+                  <HelpCircle className="h-4 w-4 text-primary-700" />
+                </div>
+                Ada pertanyaan lain?
+              </h3>
+              <p className="text-muted-foreground">
+                Hubungi kami: Telepon{" "}
+                <span className="font-medium text-foreground">0411-556617</span>{" "}
+                | WhatsApp{" "}
+                <span className="font-medium text-foreground">
+                  0822-9331-9335
+                </span>{" "}
+                | Email{" "}
+                <span className="font-medium text-foreground">
+                  bdimks.kemenperin@gmail.com
+                </span>
+              </p>
+            </div>
           </div>
         </section>
       </main>

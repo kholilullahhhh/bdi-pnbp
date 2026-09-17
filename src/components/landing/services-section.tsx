@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight, GraduationCap, Users, Home, Compass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -15,6 +14,13 @@ const serviceImages: Record<string, string> = {
   "jasa-narasumber": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80",
   "penyewaan-fasilitas": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
   "wisata-edukasi": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80",
+};
+
+const serviceGradients: Record<string, string> = {
+  "diklat-pelatihan": "from-blue-500 to-blue-700",
+  "jasa-narasumber": "from-emerald-500 to-emerald-700",
+  "penyewaan-fasilitas": "from-amber-500 to-amber-700",
+  "wisata-edukasi": "from-violet-500 to-violet-700",
 };
 
 const fallbackServices = [
@@ -50,6 +56,7 @@ const fallbackServices = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function ServicesSection({ services }: { services?: any[] }) {
   const displayServices = services && services.length > 0 ? services : fallbackServices;
 
@@ -74,24 +81,21 @@ export function ServicesSection({ services }: { services?: any[] }) {
           {displayServices.map((s) => {
             const Icon = iconMap[s.category?.icon] || GraduationCap;
             const imgSrc = serviceImages[s.slug];
+            const gradient = serviceGradients[s.slug] || "from-primary-500 to-primary-700";
 
             return (
               <Link key={s.id} href={`/layanan/${s.slug}`} className="group block h-full">
                 <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary-200 h-full flex flex-col overflow-hidden">
                   {/* Thumbnail Image */}
-                  <div className="relative h-48 overflow-hidden bg-slate-100">
-                    {imgSrc ? (
-                      <Image
-                        src={imgSrc}
-                        alt={s.name}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-slate-200" />
+                  <div
+                    className="relative h-48 overflow-hidden bg-cover bg-center"
+                    style={imgSrc ? { backgroundImage: `url(${imgSrc})` } : undefined}
+                  >
+                    {!imgSrc && (
+                      <div className={`absolute inset-0 bg-gradient-to-br ${gradient}`} />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
-                    
+
                     {s.badge && (
                       <div className="absolute top-3 right-3">
                         <Badge className="bg-white/90 text-slate-900 border-0 text-[11px] font-semibold backdrop-blur-md shadow-sm px-2.5 py-0.5">

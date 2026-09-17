@@ -7,13 +7,6 @@ import { Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { toast } from "sonner";
 
 export function LoginForm() {
@@ -54,23 +47,21 @@ export function LoginForm() {
   };
 
   return (
-    <Card>
-      <CardHeader className="text-center">
-        <CardTitle>Login</CardTitle>
-        <CardDescription>Masukkan email dan password Anda</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <div className="bg-white rounded-2xl border border-border/60 shadow-lg overflow-hidden">
+      <div className="p-6 lg:p-8">
         {registered && (
           <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded-lg p-3 mb-4">
             Registrasi berhasil! Silakan masuk dengan akun Anda.
           </div>
         )}
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-800 text-sm rounded-lg p-3 mb-4">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="bg-destructive-light border border-red-200 text-red-800 text-sm rounded-lg p-3">
-              {error}
-            </div>
-          )}
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -113,7 +104,8 @@ export function LoginForm() {
             Masuk
           </Button>
         </form>
-        <div className="mt-5 p-3 bg-surface rounded-lg border border-border text-xs text-muted-foreground space-y-1">
+
+        <div className="mt-5 p-3 bg-muted/50 rounded-lg border border-border text-xs text-muted-foreground space-y-1">
           <p className="font-medium text-foreground">Akun Demo:</p>
           <p>
             Admin:{" "}
@@ -126,7 +118,7 @@ export function LoginForm() {
             <span className="font-mono">user123</span>
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -34,7 +34,7 @@ export default async function HomePage() {
         <ServicesSection services={dbServices} />
         <AboutSection />
         <FlowSection />
-        {/* <FaqSection /> */}
+        <FaqSection />
         <CtaSection />
         <ContactSection />
       </main>

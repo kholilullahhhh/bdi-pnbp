@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { CheckCircle2, GraduationCap, Award, Building2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, GraduationCap, Award } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const features = [
@@ -53,11 +52,9 @@ export function AboutSection() {
           <div className="lg:col-span-6">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-100 aspect-[4/3]">
-                <Image
-                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80"
-                  alt="Laboratorium BDI Makassar"
-                  fill
-                  className="object-cover"
+                <div
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{ backgroundImage: "url(https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80)" }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent" />
               </div>

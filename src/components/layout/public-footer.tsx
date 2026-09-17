@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Building2, Phone, Mail, MapPin, ExternalLink, Clock } from "lucide-react";
+import { Building2, Phone, Mail, MapPin, ExternalLink } from "lucide-react";
 
 const links = {
   layanan: [

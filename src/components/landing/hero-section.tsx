@@ -1,6 +1,5 @@
 
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   BookOpen,
@@ -47,13 +46,9 @@ export function HeroSection() {
     <section className="relative isolate flex min-h-[calc(100svh-112px)] items-center overflow-hidden bg-slate-950 text-white">
       {/* Background */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1920&q=80"
-          alt="Suasana pelatihan industri"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center opacity-20"
+        <div
+          className="absolute inset-0 bg-cover bg-center opacity-20"
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1920&q=80)" }}
         />
 
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/95 to-slate-950/80" />
@@ -170,7 +165,7 @@ export function HeroSection() {
 
               {/* Service Cards */}
               <div className="space-y-3">
-                {services.map((service, index) => (
+                {services.map((service) => (
                   <div
                     key={service.title}
                     className={`group flex items-center gap-3 rounded-xl border border-white/[0.07] bg-gradient-to-r ${service.color} p-3.5 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.06]`}

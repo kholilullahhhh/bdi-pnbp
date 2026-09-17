@@ -4,9 +4,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
+import { PageHero } from "@/components/landing/page-hero";
 import {
   MapPin,
   Phone,
@@ -18,116 +18,114 @@ import {
 
 export default function KontakPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       <PublicNavbar />
       <main className="flex-1">
-        <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 py-16 lg:py-20">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
-          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="bg-white/10 text-primary-100 hover:bg-white/20 backdrop-blur-md border-white/20 mb-4">
-              Kontak
-            </Badge>
-            <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
-              Hubungi Kami
-            </h1>
-            <p className="mt-4 text-lg text-primary-200/80 max-w-2xl mx-auto">
-              Kami siap membantu informasi layanan PNBP
-            </p>
-          </div>
-          <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none">
-            <svg className="relative block w-full h-8 sm:h-12 text-background" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="currentColor">
-              <path d="M0,0 C150,90 350,-40 500,65 C650,170 900,10 1200,40 L1200,120 L0,120 Z"></path>
-            </svg>
-          </div>
-        </section>
+        <PageHero
+          title="Hubungi Kami"
+          description="Kami siap membantu informasi dan layanan PNBP Balai Diklat Industri Makassar."
+          badge="Kontak"
+          imageAlt="Kontak BDI Makassar"
+        />
 
-        <section className="py-16 lg:py-24">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 grid sm:grid-cols-2 gap-5">
-            <Card className="hover:shadow-lg transition-shadow border-border/60">
+        <section className="py-16 lg:py-24 bg-slate-50/50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 grid sm:grid-cols-2 gap-6">
+            
+            {/* Card Alamat */}
+            <Card className="bg-white border-slate-200/80 hover:border-primary-500/40 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 rounded-2xl group">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-700 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
-                    <MapPin className="h-5 w-5 text-white" />
+                <CardTitle className="flex items-center gap-3.5 text-base font-bold text-slate-900">
+                  <div className="w-11 h-11 bg-primary-50 border border-primary-100 rounded-xl flex items-center justify-center text-primary-600 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <MapPin className="h-5 w-5" />
                   </div>
-                  Alamat
+                  Alamat Kantor
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
+                <p className="text-sm text-slate-700 leading-relaxed font-medium">
                   Jl. Perintis Kemerdekaan Km 17
                   <br />
-                  Kota Makassar, Sulawesi Selatan
+                  <span className="text-slate-500 font-normal">
+                    Kota Makassar, Sulawesi Selatan
+                  </span>
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow border-border/60">
+            {/* Card Telepon & WhatsApp */}
+            <Card className="bg-white border-slate-200/80 hover:border-emerald-500/40 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 rounded-2xl group">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-700 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
-                    <Phone className="h-5 w-5 text-white" />
+                <CardTitle className="flex items-center gap-3.5 text-base font-bold text-slate-900">
+                  <div className="w-11 h-11 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <Phone className="h-5 w-5" />
                   </div>
                   Telepon & WhatsApp
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  Telepon: <span className="font-medium text-foreground">0411-556617</span>
+                <p className="text-sm text-slate-600">
+                  Telepon: <span className="font-semibold text-slate-900">0411-556617</span>
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  WhatsApp: <span className="font-medium text-foreground">0822-9331-9335</span>
+                <p className="text-sm text-slate-600">
+                  WhatsApp: <span className="font-semibold text-slate-900">0822-9331-9335</span>
                 </p>
-                <a
-                  href="https://wa.me/6282293319335"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-primary-700 hover:text-primary-800 transition-colors mt-2"
-                >
-                  <MessageSquare className="h-3.5 w-3.5" />
-                  Chat via WhatsApp
-                  <ExternalLink className="h-3 w-3 opacity-60" />
-                </a>
+                <div className="pt-2">
+                  <a
+                    href="https://wa.me/6282293319335"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 px-3.5 py-2 rounded-xl transition-all"
+                  >
+                    <MessageSquare className="h-3.5 w-3.5" />
+                    Chat via WhatsApp
+                    <ExternalLink className="h-3 w-3 opacity-70" />
+                  </a>
+                </div>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow border-border/60">
+            {/* Card Email */}
+            <Card className="bg-white border-slate-200/80 hover:border-indigo-500/40 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 rounded-2xl group">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-700 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
-                    <Mail className="h-5 w-5 text-white" />
+                <CardTitle className="flex items-center gap-3.5 text-base font-bold text-slate-900">
+                  <div className="w-11 h-11 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <Mail className="h-5 w-5" />
                   </div>
-                  Email
+                  Email Resmi
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <a
                   href="mailto:bdimks.kemenperin@gmail.com"
-                  className="text-sm font-medium text-primary-700 hover:text-primary-800 transition-colors"
+                  className="text-sm font-semibold text-primary-600 hover:text-primary-700 transition-colors inline-flex items-center gap-1.5"
                 >
                   bdimks.kemenperin@gmail.com
                 </a>
               </CardContent>
             </Card>
 
-            <Card className="hover:shadow-lg transition-shadow border-border/60">
+            {/* Card Jam Layanan */}
+            <Card className="bg-white border-slate-200/80 hover:border-amber-500/40 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 rounded-2xl group">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary-700 to-primary-800 rounded-xl flex items-center justify-center shadow-md">
-                    <Clock className="h-5 w-5 text-white" />
+                <CardTitle className="flex items-center gap-3.5 text-base font-bold text-slate-900">
+                  <div className="w-11 h-11 bg-amber-50 border border-amber-100 rounded-xl flex items-center justify-center text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-all duration-300 shadow-sm">
+                    <Clock className="h-5 w-5" />
                   </div>
                   Jam Layanan
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-1">
-                <p className="text-sm text-muted-foreground">
-                  Senin — Kamis: 07:00 — 16:00 WITA
+              <CardContent className="space-y-1.5">
+                <p className="text-sm text-slate-700">
+                  <span className="text-slate-500">Senin — Kamis:</span>{" "}
+                  <span className="font-semibold text-slate-900">07:00 — 16:00 WITA</span>
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  Jumat: 07:30 — 16:30 WITA
+                <p className="text-sm text-slate-700">
+                  <span className="text-slate-500">Jumat:</span>{" "}
+                  <span className="font-semibold text-slate-900">07:30 — 16:30 WITA</span>
                 </p>
               </CardContent>
             </Card>
+
           </div>
         </section>
       </main>
