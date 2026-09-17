@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Layers, Plus, Pencil, Trash2, FileText, Eye } from "lucide-react";
+import { Layers, Plus, Pencil, Trash2, Eye } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -171,18 +171,18 @@ export function LayananDashboard({ services, categories }: Props) {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border bg-surface">
-                      <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Nama Layanan</th>
-                      <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Kategori</th>
-                      <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Tarif</th>
-                      <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Status</th>
-                      <th className="text-right py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Aksi</th>
+                    <tr className="border-b border-border bg-surface/80">
+                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Nama Layanan</th>
+                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Kategori</th>
+                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Tarif</th>
+                      <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Status</th>
+                      <th className="text-right py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Aksi</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filtered.map((s) => (
-                      <tr key={s.id} className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors">
-                        <td className="py-3.5 px-4 font-medium text-foreground">{s.name}</td>
+                      <tr key={s.id} className="border-b border-border/60 last:border-0 hover:bg-primary-50/30 transition-colors group">
+                        <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary-800 transition-colors">{s.name}</td>
                         <td className="py-3.5 px-4 text-muted-foreground">{s.category.name}</td>
                         <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground">
                           {s.tariffs[0] ? formatCurrency(Number(s.tariffs[0].price)) : "-"}
@@ -194,14 +194,14 @@ export function LayananDashboard({ services, categories }: Props) {
                         </td>
                         <td className="py-3.5 px-4 text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="icon" aria-label="Lihat" onClick={() => { setDetailData(s); setDetailOpen(true); }}>
+                            <Button variant="ghost" size="icon" aria-label="Lihat" onClick={() => { setDetailData(s); setDetailOpen(true); }} className="text-muted-foreground hover:text-primary-700">
                               <Eye className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => openEdit(s)}>
+                            <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => openEdit(s)} className="text-muted-foreground hover:text-amber-600">
                               <Pencil className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => setDeleteTarget(s)}>
-                              <Trash2 className="h-4 w-4 text-destructive" />
+                            <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => setDeleteTarget(s)} className="text-muted-foreground hover:text-red-600">
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
                         </td>
@@ -276,7 +276,7 @@ export function LayananDashboard({ services, categories }: Props) {
       {/* Detail Dialog */}
       {detailOpen && detailData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setDetailOpen(false)}>
-          <div className="bg-white rounded-xl border border-border shadow-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl border border-border shadow-xl w-full max-w-2xl max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="p-6 space-y-4">
               <div className="flex items-start justify-between">
                 <div>
@@ -289,36 +289,36 @@ export function LayananDashboard({ services, categories }: Props) {
               </div>
               <div className="space-y-3 text-sm">
                 <div>
-                  <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Deskripsi</p>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 font-semibold">Deskripsi</p>
                   <p className="text-foreground">{detailData.description}</p>
                 </div>
                 {detailData.targetUser && (
                   <div>
-                    <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Target Pengguna</p>
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 font-semibold">Target Pengguna</p>
                     <p className="text-foreground">{detailData.targetUser}</p>
                   </div>
                 )}
                 {detailData.requirements && (
                   <div>
-                    <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Persyaratan</p>
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 font-semibold">Persyaratan</p>
                     <p className="text-foreground whitespace-pre-line">{detailData.requirements}</p>
                   </div>
                 )}
                 {detailData.procedure && (
                   <div>
-                    <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Prosedur</p>
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 font-semibold">Prosedur</p>
                     <p className="text-foreground whitespace-pre-line">{detailData.procedure}</p>
                   </div>
                 )}
                 {detailData.estimationTime && (
                   <div>
-                    <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Estimasi Waktu</p>
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 font-semibold">Estimasi Waktu</p>
                     <p className="text-foreground">{detailData.estimationTime}</p>
                   </div>
                 )}
                 {detailData.tariffs[0] && (
                   <div>
-                    <p className="text-muted-foreground text-xs uppercase tracking-wide mb-1">Tarif</p>
+                    <p className="text-muted-foreground text-xs uppercase tracking-wider mb-1 font-semibold">Tarif</p>
                     <p className="text-foreground font-mono">{formatCurrency(Number(detailData.tariffs[0].price))}</p>
                   </div>
                 )}

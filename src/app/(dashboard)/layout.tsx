@@ -1,4 +1,5 @@
 import { DashboardSidebar } from "@/components/layout/dashboard-sidebar";
+import { DashboardHeader } from "@/components/layout/dashboard-header";
 
 export default function DashboardLayout({
   children,
@@ -9,7 +10,10 @@ export default function DashboardLayout({
     <div className="min-h-screen bg-surface">
       <DashboardSidebar />
       <div className="lg:pl-64 transition-all duration-300">
-        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl">{children}</main>
+        <DashboardHeader />
+        <main className="p-4 sm:p-6 lg:p-8 max-w-7xl animate-fade-in">
+          {children}
+        </main>
       </div>
     </div>
   );

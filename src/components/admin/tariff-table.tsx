@@ -68,13 +68,17 @@ export function TariffTable({ tariffs, services }: { tariffs: Tariff[]; services
         </Button>
       </div>
 
-      <Card className="border-amber-200 bg-warning-light">
-        <CardContent className="p-4">
-          <p className="text-sm text-amber-800">
-            <strong>Catatan:</strong> Tarif harus sesuai dengan PP 54/2021 dan peraturan terkait. Jangan menimpa histori tarif lama.
+      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+        <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
+          <span className="text-amber-600 text-lg">!</span>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-amber-800">Catatan Penting</p>
+          <p className="text-sm text-amber-700 mt-0.5">
+            Tarif harus sesuai dengan PP 54/2021 dan peraturan terkait. Jangan menimpa histori tarif lama.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -91,21 +95,21 @@ export function TariffTable({ tariffs, services }: { tariffs: Tariff[]; services
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border bg-surface">
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Layanan</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Nama Tarif</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Harga</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Satuan</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Berlaku Sejak</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Verifikasi</th>
-                    <th className="text-right py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Aksi</th>
+                  <tr className="border-b border-border bg-surface/80">
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Layanan</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Nama Tarif</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Harga</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Satuan</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Berlaku Sejak</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Verifikasi</th>
+                    <th className="text-right py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((tariff) => (
-                    <tr key={tariff.id} className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors">
-                      <td className="py-3.5 px-4 text-muted-foreground">{tariff.service.name}</td>
-                      <td className="py-3.5 px-4 font-medium text-foreground">{tariff.name}</td>
+                    <tr key={tariff.id} className="border-b border-border/60 last:border-0 hover:bg-primary-50/30 transition-colors group">
+                      <td className="py-3.5 px-4 text-muted-foreground group-hover:text-foreground transition-colors">{tariff.service.name}</td>
+                      <td className="py-3.5 px-4 font-medium text-foreground group-hover:text-primary-800 transition-colors">{tariff.name}</td>
                       <td className="py-3.5 px-4 font-mono text-xs text-foreground">{formatCurrency(Number(tariff.price))}</td>
                       <td className="py-3.5 px-4 text-muted-foreground">{tariff.unit}</td>
                       <td className="py-3.5 px-4 text-muted-foreground">{formatDateShort(tariff.effectiveStartDate)}</td>
@@ -118,11 +122,11 @@ export function TariffTable({ tariffs, services }: { tariffs: Tariff[]; services
                       </td>
                       <td className="py-3.5 px-4 text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setEditData(tariff); setFormOpen(true); }}>
+                          <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setEditData(tariff); setFormOpen(true); }} className="text-muted-foreground hover:text-amber-600">
                             <Pencil className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => { setDeleteTarget(tariff); setDeleteOpen(true); }}>
-                            <Trash2 className="h-4 w-4 text-destructive" />
+                          <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => { setDeleteTarget(tariff); setDeleteOpen(true); }} className="text-muted-foreground hover:text-red-600">
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
                       </td>

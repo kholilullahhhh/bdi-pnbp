@@ -15,6 +15,7 @@ import {
   X,
   Building2,
   ChevronLeft,
+  ChevronDown,
   Layers,
   DollarSign,
   Users,
@@ -59,6 +60,7 @@ export function DashboardSidebar() {
 
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(true);
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
@@ -71,7 +73,7 @@ export function DashboardSidebar() {
       {/* Mobile hamburger */}
       <button
         type="button"
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md border border-border text-muted-foreground hover:text-foreground transition-colors"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2.5 rounded-xl bg-white shadow-lg border border-border/50 text-muted-foreground hover:text-foreground transition-all"
         onClick={() => setMobileOpen(!mobileOpen)}
         aria-label={mobileOpen ? "Tutup sidebar" : "Buka sidebar"}
       >
@@ -81,7 +83,7 @@ export function DashboardSidebar() {
       {/* Backdrop */}
       {mobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
+          className="lg:hidden fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity"
           onClick={() => setMobileOpen(false)}
         />
       )}
@@ -89,104 +91,122 @@ export function DashboardSidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen bg-white border-r border-border transition-all duration-300",
-          collapsed ? "w-[68px]" : "w-64",
+          "fixed left-0 top-0 z-40 h-screen bg-gradient-to-b from-slate-900 to-slate-800 border-r border-white/10 transition-all duration-300 flex flex-col",
+          collapsed ? "w-[72px]" : "w-64",
           mobileOpen
             ? "translate-x-0"
             : "-translate-x-full lg:translate-x-0"
         )}
       >
-        <div className="flex flex-col h-full">
-          {/* Logo header */}
-          <div
-            className={cn(
-              "flex items-center border-b border-border transition-all",
-              collapsed ? "justify-center p-3" : "justify-between p-4"
-            )}
+        {/* Logo header */}
+        <div
+          className={cn(
+            "flex items-center border-b border-white/10 transition-all",
+            collapsed ? "justify-center p-4" : "justify-between px-5 py-5"
+          )}
+        >
+          {!collapsed && (
+            <Link href="/dashboard" className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+                <Building2 className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white leading-tight">
+                  BDI Makassar
+                </p>
+                <p className="text-[10px] text-slate-400 font-medium leading-tight">
+                  Sistem PNBP
+                </p>
+              </div>
+            </Link>
+          )}
+          {collapsed && (
+            <Link href="/dashboard" className="p-1">
+              <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+                <Building2 className="h-5 w-5 text-white" />
+              </div>
+            </Link>
+          )}
+          <button
+            type="button"
+            className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/10 transition-colors text-slate-400 hover:text-white"
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? "Perluas sidebar" : "Ciutkan sidebar"}
           >
+            <ChevronLeft
+              className={cn(
+                "h-4 w-4 transition-transform duration-300",
+                collapsed && "rotate-180"
+              )}
+            />
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto" aria-label="Navigasi dashboard">
+          {/* User menu */}
+          <div>
             {!collapsed && (
-              <Link href="/dashboard" className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-primary-800 rounded-lg flex items-center justify-center">
-                  <Building2 className="h-4 w-4 text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-primary-800 leading-tight">
-                    BDI
-                  </p>
-                  <p className="text-[10px] text-muted-foreground leading-tight">
-                    Dashboard
-                  </p>
-                </div>
-              </Link>
+              <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                Menu Utama
+              </p>
             )}
-            {collapsed && (
-              <Link href="/dashboard" className="p-1">
-                <div className="w-8 h-8 bg-primary-800 rounded-lg flex items-center justify-center">
-                  <Building2 className="h-4 w-4 text-white" />
-                </div>
-              </Link>
-            )}
-            <button
-              type="button"
-              className="hidden lg:flex p-1 rounded-md hover:bg-surface-alt transition-colors text-muted-foreground"
-              onClick={() => setCollapsed(!collapsed)}
-              aria-label={collapsed ? "Perluas sidebar" : "Ciutkan sidebar"}
-            >
-              <ChevronLeft
-                className={cn(
-                  "h-4 w-4 transition-transform",
-                  collapsed && "rotate-180"
-                )}
-              />
-            </button>
+            <div className="space-y-0.5">
+              {userItems.map((item) => {
+                const active =
+                  pathname === item.href ||
+                  (item.href !== "/dashboard" &&
+                    pathname?.startsWith(item.href));
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
+                      active
+                        ? "bg-white/10 text-white shadow-sm"
+                        : "text-slate-400 hover:bg-white/5 hover:text-slate-200",
+                      collapsed && "justify-center px-2"
+                    )}
+                    aria-current={active ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                    title={collapsed ? item.title : undefined}
+                  >
+                    <div className={cn(
+                      "flex-shrink-0 transition-colors",
+                      active && "text-blue-400"
+                    )}>
+                      <item.icon className="h-[18px] w-[18px]" />
+                    </div>
+                    {!collapsed && <span>{item.title}</span>}
+                    {active && !collapsed && (
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-2.5 space-y-4 overflow-y-auto" aria-label="Navigasi dashboard">
-            {/* User menu */}
-            <div>
+          {/* Admin menu */}
+          {isAdmin && (
+            <div className="pt-2">
               {!collapsed && (
-                <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  Menu
-                </p>
-              )}
-              <div className="space-y-0.5">
-                {userItems.map((item) => {
-                  const active =
-                    pathname === item.href ||
-                    (item.href !== "/dashboard" &&
-                      pathname?.startsWith(item.href));
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                        active
-                          ? "bg-primary-50 text-primary-700"
-                          : "text-muted-foreground hover:bg-surface-alt hover:text-foreground",
-                        collapsed && "justify-center px-2"
-                      )}
-                      aria-current={active ? "page" : undefined}
-                      onClick={() => setMobileOpen(false)}
-                      title={collapsed ? item.title : undefined}
-                    >
-                      <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Admin menu */}
-            {isAdmin && (
-              <div>
-                {!collapsed && (
-                  <p className="px-3 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between px-3 mb-2 text-[10px] font-semibold uppercase tracking-widest text-slate-500 hover:text-slate-400 transition-colors"
+                  onClick={() => setAdminOpen(!adminOpen)}
+                >
+                  <span className="flex items-center gap-1.5">
                     <Shield className="h-3 w-3" /> Admin
-                  </p>
-                )}
+                  </span>
+                  <ChevronDown className={cn(
+                    "h-3 w-3 transition-transform duration-200",
+                    !adminOpen && "-rotate-90"
+                  )} />
+                </button>
+              )}
+              {(!adminOpen && !collapsed) ? null : (
                 <div className="space-y-0.5">
                   {adminItems.map((item) => {
                     const active =
@@ -197,44 +217,52 @@ export function DashboardSidebar() {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                           active
-                            ? "bg-primary-50 text-primary-700"
-                            : "text-muted-foreground hover:bg-surface-alt hover:text-foreground",
+                            ? "bg-white/10 text-white shadow-sm"
+                            : "text-slate-400 hover:bg-white/5 hover:text-slate-200",
                           collapsed && "justify-center px-2"
                         )}
                         aria-current={active ? "page" : undefined}
                         onClick={() => setMobileOpen(false)}
                         title={collapsed ? item.title : undefined}
                       >
-                        <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+                        <div className={cn(
+                          "flex-shrink-0 transition-colors",
+                          active && "text-blue-400"
+                        )}>
+                          <item.icon className="h-[18px] w-[18px]" />
+                        </div>
                         {!collapsed && <span>{item.title}</span>}
+                        {active && !collapsed && (
+                          <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-400" />
+                        )}
                       </Link>
                     );
                   })}
                 </div>
-              </div>
-            )}
-          </nav>
-
-          {/* User & logout */}
-          <div className="p-2.5 border-t border-border space-y-1">
-            {!collapsed && (
-              <UserBadge />
-            )}
-            <button
-              type="button"
-              onClick={handleLogout}
-              className={cn(
-                "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive-light hover:text-red-700 transition-colors w-full text-left",
-                collapsed && "justify-center px-2"
               )}
-              title={collapsed ? "Keluar" : undefined}
-            >
-              <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
-              {!collapsed && <span>Keluar</span>}
-            </button>
-          </div>
+            </div>
+          )}
+        </nav>
+
+        {/* User & logout */}
+        <div className="p-3 border-t border-white/10 space-y-1">
+          {!collapsed && (
+            <UserBadge />
+          )}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all w-full text-left",
+              collapsed && "justify-center px-2"
+            )}
+            title={collapsed ? "Keluar" : undefined}
+          >
+            <LogOut className="h-[18px] w-[18px] flex-shrink-0" />
+            {!collapsed && <span>Keluar</span>}
+          </button>
         </div>
       </aside>
     </>

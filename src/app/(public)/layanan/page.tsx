@@ -118,18 +118,25 @@ export default function LayananPage() {
       <PublicNavbar />
       <main className="flex-1">
         {/* Header */}
-        <section className="gradient-hero py-16 lg:py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Badge className="bg-white/15 text-white border-white/20 mb-4">
+        <section className="relative overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-950 py-16 lg:py-20">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:24px_24px]" />
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Badge className="bg-white/10 text-primary-100 hover:bg-white/20 backdrop-blur-md border-white/20 mb-4">
               Layanan PNBP
             </Badge>
             <h1 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
               Layanan PNBP BDI Makassar
             </h1>
-            <p className="mt-4 text-lg text-primary-100/80 max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-primary-200/80 max-w-2xl mx-auto">
               Pelayanan Penerimaan Negara Bukan Pajak untuk pengembangan SDM
               industri
             </p>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none">
+            <svg className="relative block w-full h-8 sm:h-12 text-background" viewBox="0 0 1200 120" preserveAspectRatio="none" fill="currentColor">
+              <path d="M0,0 C150,90 350,-40 500,65 C650,170 900,10 1200,40 L1200,120 L0,120 Z"></path>
+            </svg>
           </div>
         </section>
 
@@ -140,14 +147,14 @@ export default function LayananPage() {
               <Card
                 key={s.id}
                 id={s.id}
-                className="scroll-mt-24 overflow-hidden hover:shadow-md transition-shadow"
+                className="scroll-mt-24 overflow-hidden hover:shadow-lg transition-shadow border-border/60"
               >
                 <CardContent className="p-0">
                   <div className="grid lg:grid-cols-[1fr_1fr] gap-0">
                     <div className="p-6 lg:p-8">
                       <div className="flex items-start gap-4 mb-5">
-                        <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                          <s.icon className="h-6 w-6 text-primary-700" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary-700 to-primary-800 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                          <s.icon className="h-6 w-6 text-white" />
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
@@ -167,22 +174,22 @@ export default function LayananPage() {
                         {s.desc}
                       </p>
                       <div className="mb-4">
-                        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                           Target Pengguna
                         </p>
                         <p className="text-sm text-foreground">{s.target}</p>
                       </div>
                       {s.tarif && (
-                        <div className="bg-warning-light border border-amber-200 rounded-lg p-3 flex items-center gap-2">
-                          <Info className="h-4 w-4 text-amber-600 flex-shrink-0" />
-                          <span className="text-sm font-medium text-amber-800">
+                        <div className="bg-info-light border border-primary-200 rounded-lg p-3 flex items-center gap-2">
+                          <Info className="h-4 w-4 text-primary-700 flex-shrink-0" />
+                          <span className="text-sm font-medium text-primary-800">
                             Tarif: {s.tarif}
                           </span>
                         </div>
                       )}
                     </div>
-                    <div className="bg-surface p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-border">
-                      <h3 className="text-sm font-semibold text-foreground uppercase tracking-wide mb-3">
+                    <div className="bg-primary-50/50 p-6 lg:p-8 border-t lg:border-t-0 lg:border-l border-border">
+                      <h3 className="text-sm font-semibold text-primary-800 uppercase tracking-wider mb-3">
                         Yang Tersedia
                       </h3>
                       <ul className="space-y-2.5 mb-6">
@@ -191,13 +198,13 @@ export default function LayananPage() {
                             key={f}
                             className="flex items-center gap-2.5 text-sm text-muted-foreground"
                           >
-                            <CheckCircle2 className="h-4 w-4 text-success flex-shrink-0" />
+                            <CheckCircle2 className="h-4 w-4 text-primary-600 flex-shrink-0" />
                             {f}
                           </li>
                         ))}
                       </ul>
                       <Link href="/register">
-                        <Button className="w-full">
+                        <Button className="w-full shadow-md hover:shadow-lg transition-shadow">
                           Ajukan Sekarang
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
@@ -211,16 +218,16 @@ export default function LayananPage() {
         </section>
 
         {/* Skema Sertifikasi */}
-        <section className="py-16 lg:py-24 bg-surface" id="sertifikasi">
+        <section className="py-16 lg:py-24 bg-primary-950 text-white" id="sertifikasi">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <Badge variant="info" className="mb-4">
+              <Badge className="bg-white/10 text-primary-100 border-white/20 mb-4">
                 Sertifikasi
               </Badge>
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground tracking-tight">
+              <h2 className="text-3xl lg:text-4xl font-bold text-white tracking-tight">
                 Skema Sertifikasi LSP BDI Makassar
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="mt-4 text-lg text-primary-200/80 max-w-2xl mx-auto">
                 15 skema sertifikasi kompetensi yang diakui BNSP
               </p>
             </div>
@@ -228,12 +235,12 @@ export default function LayananPage() {
               {skema.map((s, i) => (
                 <div
                   key={s}
-                  className="flex items-start gap-3 bg-white rounded-xl p-4 border border-border hover:border-primary-200 hover:shadow-sm transition-all"
+                  className="flex items-start gap-3 bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/15 hover:border-white/30 hover:bg-white/15 transition-all"
                 >
-                  <span className="w-6 h-6 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <span className="w-6 h-6 bg-primary-500/30 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                     {i + 1}
                   </span>
-                  <span className="text-sm text-foreground leading-snug">
+                  <span className="text-sm text-primary-100 leading-snug">
                     {s}
                   </span>
                 </div>
@@ -245,10 +252,12 @@ export default function LayananPage() {
         {/* Info Tarif */}
         <section className="py-16 lg:py-24">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <Card>
+            <Card className="border-primary-200 shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Info className="h-5 w-5 text-primary-700" />
+                  <div className="w-9 h-9 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <Info className="h-4.5 w-4.5 text-primary-700" />
+                  </div>
                   Informasi Tarif PNBP
                 </CardTitle>
               </CardHeader>
@@ -263,13 +272,13 @@ export default function LayananPage() {
                     "PMK terkait tarif layanan BLU Kementerian Perindustrian",
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-2.5">
-                      <CheckCircle2 className="h-4 w-4 text-success mt-0.5 flex-shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-primary-600 mt-0.5 flex-shrink-0" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="bg-warning-light border border-amber-200 rounded-lg p-4">
-                  <p className="text-sm text-amber-800">
+                <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+                  <p className="text-sm text-primary-800">
                     <strong>Catatan:</strong> Tarif merupakan batas tertinggi.
                     Tarif aktual dapat berbeda sesuai ketentuan BDI Makassar.
                   </p>

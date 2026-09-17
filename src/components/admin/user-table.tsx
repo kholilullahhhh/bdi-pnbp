@@ -61,25 +61,25 @@ export function UserTable({ users }: { users: User[] }) {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border bg-surface">
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Pengguna</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Email</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Role</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Status</th>
-                    <th className="text-left py-3 px-4 font-medium text-muted-foreground text-xs uppercase tracking-wide">Terdaftar</th>
+                  <tr className="border-b border-border bg-surface/80">
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Pengguna</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Email</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Role</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Status</th>
+                    <th className="text-left py-3 px-4 font-semibold text-muted-foreground text-xs uppercase tracking-wider">Terdaftar</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map((u) => (
                     <tr
                       key={u.id}
-                      className="border-b border-border last:border-0 hover:bg-surface-alt/50 transition-colors cursor-pointer"
+                      className="border-b border-border/60 last:border-0 hover:bg-primary-50/30 transition-colors cursor-pointer group"
                       onClick={() => setManageUser(u)}
                     >
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
                           <Avatar size="sm" fallback={getInitials(u.name)} />
-                          <span className="font-medium text-foreground">{u.name}</span>
+                          <span className="font-medium text-foreground group-hover:text-primary-800 transition-colors">{u.name}</span>
                         </div>
                       </td>
                       <td className="py-3.5 px-4 text-muted-foreground">{u.email}</td>

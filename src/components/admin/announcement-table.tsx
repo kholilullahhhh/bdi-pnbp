@@ -64,11 +64,11 @@ export function AnnouncementTable({ announcements }: { announcements: Announceme
           ) : (
             <div className="space-y-3">
               {announcements.map((a) => (
-                <div key={a.id} className="border border-border rounded-xl p-4 hover:bg-surface-alt/50 transition-colors">
+                <div key={a.id} className="border border-border/60 rounded-xl p-4 hover:bg-primary-50/30 hover:border-primary-200 transition-all duration-200 group">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-medium text-foreground">{a.title}</h3>
+                        <h3 className="font-semibold text-foreground group-hover:text-primary-800 transition-colors">{a.title}</h3>
                         <Badge variant={a.isPublished ? "success" : "secondary"}>
                           {a.isPublished ? "Diterbitkan" : "Draft"}
                         </Badge>
@@ -79,11 +79,11 @@ export function AnnouncementTable({ announcements }: { announcements: Announceme
                       </p>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setEditData(a); setFormOpen(true); }}>
+                      <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setEditData(a); setFormOpen(true); }} className="text-muted-foreground hover:text-amber-600">
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => { setDeleteTarget(a); setDeleteOpen(true); }}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                      <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => { setDeleteTarget(a); setDeleteOpen(true); }} className="text-muted-foreground hover:text-red-600">
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>

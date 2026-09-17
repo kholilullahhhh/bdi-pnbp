@@ -30,7 +30,7 @@ export function Dialog({ open, onClose, children, className }: DialogProps) {
       ref={dialogRef}
       onClose={onClose}
       className={cn(
-        "backdrop:bg-black/50 backdrop:backdrop-blur-sm rounded-xl border border-border shadow-lg p-0 w-full max-w-lg",
+        "backdrop:bg-black/50 backdrop:backdrop-blur-sm rounded-xl border border-border shadow-lg p-0 w-full max-w-lg m-auto",
         className
       )}
     >

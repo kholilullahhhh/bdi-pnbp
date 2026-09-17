@@ -64,22 +64,22 @@ export function FAQTable({ faqs }: { faqs: FAQ[] }) {
           ) : (
             <div className="space-y-3">
               {faqs.map((faq) => (
-                <div key={faq.id} className="border border-border rounded-xl p-4 hover:bg-surface-alt/50 transition-colors">
+                <div key={faq.id} className="border border-border/60 rounded-xl p-4 hover:bg-primary-50/30 hover:border-primary-200 transition-all duration-200 group">
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         {faq.category && <Badge variant="info" className="text-[10px]">{faq.category}</Badge>}
                         <span className="text-xs text-muted-foreground">Urutan: {faq.sortOrder}</span>
                       </div>
-                      <p className="font-medium text-foreground mt-2">{faq.question}</p>
+                      <p className="font-semibold text-foreground mt-2 group-hover:text-primary-800 transition-colors">{faq.question}</p>
                       <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{faq.answer}</p>
                     </div>
                     <div className="flex items-center gap-1 flex-shrink-0">
-                      <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setEditData(faq); setFormOpen(true); }}>
+                      <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setEditData(faq); setFormOpen(true); }} className="text-muted-foreground hover:text-amber-600">
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => { setDeleteTarget(faq); setDeleteOpen(true); }}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                      <Button variant="ghost" size="icon" aria-label="Hapus" onClick={() => { setDeleteTarget(faq); setDeleteOpen(true); }} className="text-muted-foreground hover:text-red-600">
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
