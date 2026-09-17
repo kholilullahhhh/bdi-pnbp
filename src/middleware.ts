@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 const ROLE_HIERARCHY: Record<string, number> = {
   PUBLIC: 0,
@@ -17,10 +17,10 @@ function hasAccess(userRole: string, requiredRole: string): boolean {
   return userLevel >= requiredLevel;
 }
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const session = req.auth;
-  const userRole = (session?.user as unknown as { role: string })?.role ?? "PUBLIC";
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const userRole = (token?.role as string) ?? "PUBLIC";
 
   // API route protection
   if (pathname.startsWith("/api/")) {
@@ -39,7 +39,7 @@ export default auth((req) => {
       }
     }
 
-    if (!session?.user) {
+    if (!token) {
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
@@ -69,7 +69,7 @@ export default auth((req) => {
 
   // Page route protection
   if (pathname.startsWith("/dashboard")) {
-    if (!session?.user) {
+    if (!token) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
@@ -80,7 +80,7 @@ export default auth((req) => {
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/dashboard/:path*", "/api/applications/:path*", "/api/payments/:path*"],
