@@ -19,7 +19,7 @@ function hasAccess(userRole: string, requiredRole: string): boolean {
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const userRole = (token?.role as string) ?? "PUBLIC";
 
   // API route protection
