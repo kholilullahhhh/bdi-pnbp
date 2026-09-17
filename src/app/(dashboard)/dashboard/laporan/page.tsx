@@ -6,7 +6,16 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getReportSummary, formatCurrency } from "@/lib/db-queries";
 
 export default async function LaporanPage() {
-  const summary = await getReportSummary();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let summary: any = {
+    totalApps: 0, totalUsers: 0, paidAmount: 0, billedAmount: 0,
+    pendingApps: 0, completedApps: 0, rejectedApps: 0,
+  };
+  try {
+    summary = await getReportSummary();
+  } catch (error) {
+    console.error("Laporan page DB error:", error);
+  }
 
   const summaryStats = [
     { label: "Total Permohonan", value: summary.totalApps.toString(), icon: FileText, gradient: "from-blue-500 to-blue-600", shadow: "shadow-blue-500/20" },

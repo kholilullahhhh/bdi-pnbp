@@ -11,7 +11,13 @@ const actionVariant: Record<string, "default" | "secondary" | "info" | "success"
 };
 
 export default async function AuditLogPage() {
-  const logs = await getAuditLogs();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let logs: any[] = [];
+  try {
+    logs = await getAuditLogs();
+  } catch (error) {
+    console.error("Audit log page DB error:", error);
+  }
 
   return (
     <div className="space-y-6">

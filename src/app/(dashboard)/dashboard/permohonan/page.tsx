@@ -15,14 +15,21 @@ export default async function PermohonanPage() {
   const userId = (session?.user as unknown as { id: string })?.id;
   if (!userId) return null;
 
-  const applications = await prisma.application.findMany({
-    where: { userId },
-    include: {
-      service: { select: { name: true } },
-      invoice: { select: { totalAmount: true, status: true } },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let applications: any[] = [];
+
+  try {
+    applications = await prisma.application.findMany({
+      where: { userId },
+      include: {
+        service: { select: { name: true } },
+        invoice: { select: { totalAmount: true, status: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Permohonan page DB error:", error);
+  }
 
   return (
     <div className="space-y-6">

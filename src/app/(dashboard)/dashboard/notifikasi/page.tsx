@@ -18,10 +18,17 @@ export default async function NotifikasiPage() {
   const userId = (session?.user as unknown as { id: string })?.id;
   if (!userId) return null;
 
-  const notifications = await prisma.notification.findMany({
-    where: { userId },
-    orderBy: { createdAt: "desc" },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let notifications: any[] = [];
+
+  try {
+    notifications = await prisma.notification.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.error("Notifikasi page DB error:", error);
+  }
 
   return (
     <div className="space-y-6">

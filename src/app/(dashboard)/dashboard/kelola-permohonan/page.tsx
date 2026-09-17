@@ -7,7 +7,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getApplications, getStatusLabel, getStatusVariant, formatDateShort } from "@/lib/db-queries";
 
 export default async function KelolaPermohonanPage() {
-  const applications = await getApplications();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let applications: any[] = [];
+  try {
+    applications = await getApplications();
+  } catch (error) {
+    console.error("Kelola permohonan page DB error:", error);
+  }
 
   return (
     <div className="space-y-6">

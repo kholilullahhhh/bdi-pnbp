@@ -114,7 +114,7 @@ export async function PATCH(
       await prisma.invoice.update({
         where: { id: payment.invoiceId },
         data: {
-          paidAmount: paidAmount as any,
+          paidAmount: paidAmount,
           status: isFullyPaid ? "PAID" : "PENDING",
         },
       });

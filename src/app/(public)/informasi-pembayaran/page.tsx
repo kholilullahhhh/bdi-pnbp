@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
 import {
-  CreditCard,
   AlertCircle,
   CheckCircle2,
   Info,

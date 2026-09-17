@@ -7,7 +7,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { getPayments, getStatusLabel, getStatusVariant, formatCurrency, formatDateShort } from "@/lib/db-queries";
 
 export default async function KelolaPembayaranPage() {
-  const payments = await getPayments();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let payments: any[] = [];
+  try {
+    payments = await getPayments();
+  } catch (error) {
+    console.error("Kelola pembayaran page DB error:", error);
+  }
 
   return (
     <div className="space-y-6">

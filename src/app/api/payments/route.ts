@@ -122,6 +122,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const existingPending = await prisma.payment.findFirst({
+      where: { invoiceId, status: "PENDING" },
+    });
+    if (existingPending) {
+      return NextResponse.json(
+        { error: "Sudah ada pembayaran yang menunggu verifikasi untuk invoice ini" },
+        { status: 400 }
+      );
+    }
+
+    if (Number(amount) > Number(invoice.totalAmount)) {
+      return NextResponse.json(
+        { error: "Jumlah pembayaran melebihi total tagihan" },
+        { status: 400 }
+      );
+    }
+
     // Generate payment number
     const paymentNumber = `PAY-${Date.now().toString(36).toUpperCase()}`;
 
@@ -136,7 +153,6 @@ export async function POST(request: NextRequest) {
         accountNumber: accountNumber || null,
         notes: notes || null,
         status: "PENDING",
-        paidAt: new Date(),
       },
       include: {
         invoice: true,

@@ -234,7 +234,7 @@ export default async function DashboardPage() {
               />
             ) : (
               <div className="space-y-2">
-                {recentApps.map((app, i) => (
+                {recentApps.map((app) => (
                   <div
                     key={app.id}
                     className="flex items-center justify-between p-3.5 rounded-xl border border-border/60 hover:border-primary-200 hover:bg-primary-50/30 transition-all duration-200 group"

@@ -17,7 +17,6 @@ import {
   BookOpen,
   Sparkles,
   Quote,
-  HelpCircle,
   Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -302,7 +301,7 @@ export default function HomePage() {
             </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-              {steps.map((s, i) => (
+              {steps.map((s) => (
                 <div
                   key={s.step}
                   className="relative flex flex-col items-center text-center group"
@@ -389,7 +388,7 @@ export default function HomePage() {
                     title: "Sarana Lengkap",
                     desc: "Gedung diklat, asrama, & lab pengolahan.",
                   },
-                ].map((c, idx) => (
+                ].map((c) => (
                   <Card
                     key={c.title}
                     className="p-6 border border-border/60 hover:shadow-md transition-shadow"
@@ -436,7 +435,7 @@ export default function HomePage() {
                   <CardContent className="p-0">
                     <Quote className="h-8 w-8 text-primary/30 mb-4" />
                     <p className="text-sm text-foreground/90 italic leading-relaxed mb-6">
-                      "{t.quote}"
+                      &ldquo;{t.quote}&rdquo;
                     </p>
                   </CardContent>
                   <div className="pt-4 border-t border-border/40">

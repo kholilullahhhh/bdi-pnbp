@@ -13,10 +13,17 @@ export default async function ProfilPage() {
   const userId = (session?.user as unknown as { id: string })?.id;
   if (!userId) return null;
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    include: { profile: true },
-  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let user: any = null;
+
+  try {
+    user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { profile: true },
+    });
+  } catch (error) {
+    console.error("Profil page DB error:", error);
+  }
   if (!user) return null;
 
   const profileFields = [

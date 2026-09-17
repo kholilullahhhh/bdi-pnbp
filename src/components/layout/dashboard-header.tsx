@@ -2,7 +2,7 @@
 
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { Bell, Search } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/utils";
 import Link from "next/link";

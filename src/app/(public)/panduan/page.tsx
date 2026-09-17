@@ -2,14 +2,12 @@ import Link from "next/link";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
-import { BookOpen, CheckCircle2, HelpCircle, ArrowRight } from "lucide-react";
+import { CheckCircle2, HelpCircle, ArrowRight } from "lucide-react";
 
 export default function PanduanPage() {
   return (

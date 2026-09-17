@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { CreditCard, Clock, CheckCircle2, TrendingUp } from "lucide-react";
+import { CreditCard, Clock, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -13,19 +13,28 @@ export default async function PembayaranPage() {
   const userId = (session?.user as unknown as { id: string })?.id;
   if (!userId) return null;
 
-  const [payments, summary] = await Promise.all([
-    prisma.payment.findMany({
-      where: { invoice: { application: { userId } } },
-      include: {
-        invoice: { include: { application: { select: { serviceName: true } } } },
-      },
-      orderBy: { createdAt: "desc" },
-    }),
-    prisma.payment.aggregate({
-      where: { status: "PAID", invoice: { application: { userId } } },
-      _sum: { amount: true },
-    }),
-  ]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let payments: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let summary: any = { _sum: { amount: null } };
+
+  try {
+    [payments, summary] = await Promise.all([
+      prisma.payment.findMany({
+        where: { invoice: { application: { userId } } },
+        include: {
+          invoice: { include: { application: { select: { serviceName: true } } } },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.payment.aggregate({
+        where: { status: "PAID", invoice: { application: { userId } } },
+        _sum: { amount: true },
+      }),
+    ]);
+  } catch (error) {
+    console.error("Pembayaran page DB error:", error);
+  }
 
   const pendingCount = payments.filter((p) => p.status === "PENDING").length;
   const paidCount = payments.filter((p) => p.status === "PAID").length;

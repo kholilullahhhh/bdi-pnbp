@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth, getClientIp } from "@/lib/auth-helpers";
+import { requireAuth } from "@/lib/auth-helpers";
 
 export async function GET(
   request: NextRequest,
