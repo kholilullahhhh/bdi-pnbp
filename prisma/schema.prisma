@@ -1,0 +1,399 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum UserRole {
+  PUBLIC
+  USER
+  OPERATOR
+  ADMIN
+  SUPER_ADMIN
+  LEADER
+  AUDITOR
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  UNDER_REVIEW
+  REVISION_REQUIRED
+  APPROVED
+  REJECTED
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  NOT_APPLICABLE
+  PENDING
+  AWAITING_PAYMENT
+  PAID
+  FAILED
+  EXPIRED
+  REFUNDED
+}
+
+enum ServiceStatus {
+  ACTIVE
+  INACTIVE
+  UNVERIFIED
+}
+
+enum TariffVerificationStatus {
+  VERIFIED
+  UNVERIFIED
+  PENDING
+  EXPIRED
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  name          String
+  phone         String?
+  nip           String?   @unique
+  instansi      String?
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  profile               Profile?
+  applications          Application[]
+  notifications         Notification[]
+  auditLogs             AuditLog[]
+  createdServices       Service[]           @relation("ServiceCreator")
+  createdAnnouncements  Announcement[]     @relation("AnnouncementCreator")
+  createdFAQs           FAQ[]              @relation("FaqCreator")
+  tariffChanges         ServiceTariff[]    @relation("TariffModifier")
+  paymentVerifications  Payment[]          @relation("PaymentVerifier")
+
+  @@index([email])
+  @@index([role])
+}
+
+model Profile {
+  id        String  @id @default(cuid())
+  userId    String  @unique
+  alamat    String?
+  kota      String?
+  provinsi  String?
+  instansi  String?
+  jabatan   String?
+  foto      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ServiceCategory {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  icon        String?
+  isActive    Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  services Service[]
+
+  @@index([slug])
+}
+
+model Service {
+  id              String        @id @default(cuid())
+  name            String
+  slug            String        @unique
+  description     String
+  targetUser      String?
+  requirements    String?       @db.Text
+  procedure       String?       @db.Text
+  paymentInfo     String?       @db.Text
+  cancellation    String?       @db.Text
+  estimationTime  String?
+  status          ServiceStatus @default(ACTIVE)
+  isActive        Boolean       @default(true)
+  sortOrder       Int           @default(0)
+  imageUrl        String?
+  createdById     String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  category        ServiceCategory  @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  createdBy       User?            @relation("ServiceCreator", fields: [createdById], references: [id])
+  tariffs         ServiceTariff[]
+  applications    Application[]
+  invoiceItems    InvoiceItem[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([status])
+}
+
+model ServiceTariff {
+  id                  String                  @id @default(cuid())
+  serviceId           String
+  name                String
+  price               Decimal                 @db.Decimal(15, 2)
+  unit                String
+  description         String?
+  legalBasis          String?
+  regulationNumber    String?
+  regulationYear      Int?
+  effectiveStartDate  DateTime
+  effectiveEndDate    DateTime?
+  verificationStatus  TariffVerificationStatus @default(UNVERIFIED)
+  verifiedById        String?
+  verifiedAt          DateTime?
+  createdById         String?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+
+  service             Service                 @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  modifiedBy          User?                   @relation("TariffModifier", fields: [createdById], references: [id])
+  invoices            InvoiceItem[]
+
+  @@index([serviceId])
+  @@index([verificationStatus])
+}
+
+model Application {
+  id              String            @id @default(cuid())
+  applicationNumber String          @unique
+  serviceName     String
+  serviceId       String
+  userId          String
+  status          ApplicationStatus @default(DRAFT)
+  paymentStatus   PaymentStatus     @default(NOT_APPLICABLE)
+  notes           String?           @db.Text
+  rejectionReason String?
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  service         Service           @relation(fields: [serviceId], references: [id])
+  user            User              @relation(fields: [userId], references: [id])
+  documents       ApplicationDocument[]
+  statusHistory   ApplicationStatusHistory[]
+  invoice         Invoice?
+
+  @@index([applicationNumber])
+  @@index([userId])
+  @@index([status])
+  @@index([serviceId])
+}
+
+model ApplicationDocument {
+  id            String      @id @default(cuid())
+  applicationId String
+  fileName      String
+  fileUrl       String
+  fileSize      Int?
+  mimeType      String?
+  documentType  String?
+  createdAt     DateTime    @default(now())
+
+  application   Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+}
+
+model ApplicationStatusHistory {
+  id            String            @id @default(cuid())
+  applicationId String
+  oldStatus     ApplicationStatus?
+  newStatus     ApplicationStatus
+  notes         String?
+  changedById   String?
+  changedAt     DateTime          @default(now())
+
+  application   Application       @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+}
+
+model Invoice {
+  id              String        @id @default(cuid())
+  invoiceNumber   String        @unique
+  applicationId   String        @unique
+  totalAmount     Decimal       @db.Decimal(15, 2)
+  paidAmount      Decimal       @db.Decimal(15, 2) @default(0)
+  status          PaymentStatus @default(PENDING)
+  dueDate         DateTime?
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  application     Application   @relation(fields: [applicationId], references: [id])
+  items           InvoiceItem[]
+  payments        Payment[]
+
+  @@index([invoiceNumber])
+  @@index([applicationId])
+  @@index([status])
+}
+
+model InvoiceItem {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  serviceId     String
+  tariffId      String?
+  description   String
+  quantity      Int      @default(1)
+  unitPrice     Decimal  @db.Decimal(15, 2)
+  totalPrice    Decimal  @db.Decimal(15, 2)
+
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  service       Service  @relation(fields: [serviceId], references: [id])
+  tariff        ServiceTariff? @relation(fields: [tariffId], references: [id])
+
+  @@index([invoiceId])
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  paymentNumber     String        @unique
+  invoiceId         String
+  amount            Decimal       @db.Decimal(15, 2)
+  paymentMethod     String?
+  paymentReference  String?
+  bankName          String?
+  accountNumber     String?
+  status            PaymentStatus @default(PENDING)
+  verifiedById      String?
+  verifiedAt        DateTime?
+  notes             String?
+  paidAt            DateTime?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  invoice           Invoice       @relation(fields: [invoiceId], references: [id])
+  verifier          User?         @relation("PaymentVerifier", fields: [verifiedById], references: [id])
+  events            PaymentEvent[]
+  proofs            PaymentProof[]
+
+  @@index([paymentNumber])
+  @@index([invoiceId])
+  @@index([status])
+}
+
+model PaymentEvent {
+  id          String   @id @default(cuid())
+  paymentId   String
+  eventType   String
+  eventData   Json?
+  createdAt   DateTime @default(now())
+
+  payment     Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}
+
+model PaymentProof {
+  id          String   @id @default(cuid())
+  paymentId   String
+  fileName    String
+  fileUrl     String
+  fileSize    Int?
+  mimeType    String?
+  description String?
+  createdAt   DateTime @default(now())
+
+  payment     Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("info")
+  isRead    Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+}
+
+model Announcement {
+  id          String    @id @default(cuid())
+  title       String
+  content     String    @db.Text
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  createdBy   User?     @relation("AnnouncementCreator", fields: [createdById], references: [id])
+
+  @@index([isPublished])
+}
+
+model FAQ {
+  id          String    @id @default(cuid())
+  question    String
+  answer      String    @db.Text
+  category    String?
+  sortOrder   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdById String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  createdBy   User?     @relation("FaqCreator", fields: [createdById], references: [id])
+
+  @@index([category])
+  @@index([isActive])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entity     String
+  entityId   String?
+  oldData    Json?
+  newData    Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([entity])
+  @@index([createdAt])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String?
+  group     String?
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+  @@index([group])
+}
