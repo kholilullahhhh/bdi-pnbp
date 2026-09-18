@@ -28,6 +28,7 @@ export const serviceSchema = z.object({
   description: z.string().min(10, "Deskripsi minimal 10 karakter"),
   categoryId: z.string().min(1, "Pilih kategori"),
   targetUser: z.string().optional(),
+  imageUrl: z.string().optional(),
   requirements: z.string().optional(),
   procedure: z.string().optional(),
   paymentInfo: z.string().optional(),

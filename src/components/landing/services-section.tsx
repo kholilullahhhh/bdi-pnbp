@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, GraduationCap, Users, Home, Compass } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getServiceImage } from "@/lib/service-images";
 
 const iconMap: Record<string, typeof GraduationCap> = {
   GraduationCap,
@@ -9,18 +10,16 @@ const iconMap: Record<string, typeof GraduationCap> = {
   Compass,
 };
 
-const serviceImages: Record<string, string> = {
-  "diklat-pelatihan": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80",
-  "jasa-narasumber": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80",
-  "penyewaan-fasilitas": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
-  "wisata-edukasi": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80",
-};
-
 const serviceGradients: Record<string, string> = {
   "diklat-pelatihan": "from-blue-500 to-blue-700",
   "jasa-narasumber": "from-emerald-500 to-emerald-700",
   "penyewaan-fasilitas": "from-amber-500 to-amber-700",
   "wisata-edukasi": "from-violet-500 to-violet-700",
+  "pelatihan-penyelia-halal": "from-blue-500 to-blue-700",
+  "pandu-kakao": "from-amber-600 to-orange-700",
+  "jasa-narasumber-teknis": "from-emerald-500 to-emerald-700",
+  "sewa-aula": "from-indigo-500 to-indigo-700",
+  "wisata-edukasi-cokelat": "from-violet-500 to-fuchsia-600",
 };
 
 const fallbackServices = [
@@ -80,7 +79,7 @@ export function ServicesSection({ services }: { services?: any[] }) {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {displayServices.map((s) => {
             const Icon = iconMap[s.category?.icon] || GraduationCap;
-            const imgSrc = serviceImages[s.slug];
+            const imgSrc = getServiceImage(s);
             const gradient = serviceGradients[s.slug] || "from-primary-500 to-primary-700";
 
             return (

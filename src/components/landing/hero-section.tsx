@@ -43,7 +43,7 @@ const services = [
 
 export function HeroSection() {
   return (
-    <section className="relative isolate flex min-h-[calc(100svh-112px)] items-center overflow-hidden bg-slate-950 text-white">
+    <section className="relative isolate flex min-h-[calc(100svh-100px)] items-center overflow-hidden bg-slate-950 text-white">
       {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div

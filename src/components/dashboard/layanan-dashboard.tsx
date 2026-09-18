@@ -27,6 +27,7 @@ interface Service {
   estimationTime?: string | null;
   status: string;
   categoryId: string;
+  imageUrl?: string | null;
   category: { name: string };
   tariffs: { price: { toString(): string } }[];
 }
@@ -51,6 +52,7 @@ const emptyForm = {
   estimationTime: "",
   categoryId: "",
   status: "ACTIVE",
+  imageUrl: "",
 };
 
 export function LayananDashboard({ services, categories }: Props) {
@@ -92,6 +94,7 @@ export function LayananDashboard({ services, categories }: Props) {
       estimationTime: s.estimationTime ?? "",
       categoryId: s.categoryId,
       status: s.status,
+      imageUrl: s.imageUrl ?? "",
     });
     setFormOpen(true);
   };
@@ -248,6 +251,25 @@ export function LayananDashboard({ services, categories }: Props) {
             <div className="space-y-2">
               <Label htmlFor="description">Deskripsi *</Label>
               <Textarea id="description" value={form.description} onChange={(e) => set("description", e.target.value)} rows={3} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="imageUrl">URL Gambar</Label>
+              <Input
+                id="imageUrl"
+                value={form.imageUrl}
+                onChange={(e) => set("imageUrl", e.target.value)}
+                placeholder="https://images.unsplash.com/..."
+              />
+              {form.imageUrl ? (
+                <div className="mt-2">
+                  <div className="relative w-full h-32 rounded-lg overflow-hidden border border-border bg-muted">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={form.imageUrl} alt="Pratinjau gambar layanan" className="w-full h-full object-cover" />
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xs text-muted-foreground">Opsional. Tampil di daftar layanan dan halaman detail. Kosongkan untuk pakai gambar bawaan.</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="targetUser">Target Pengguna</Label>

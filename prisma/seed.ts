@@ -87,6 +87,8 @@ async function main() {
       categoryId: createdCategories[0].id,
       status: "ACTIVE",
       sortOrder: 1,
+      imageUrl:
+        "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1600&q=80",
     },
     {
       name: "Pandu Kakao",
@@ -99,6 +101,8 @@ async function main() {
       categoryId: createdCategories[0].id,
       status: "ACTIVE",
       sortOrder: 2,
+      imageUrl:
+        "https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1600&q=80",
     },
     {
       name: "Jasa Narasumber Teknis",
@@ -111,6 +115,8 @@ async function main() {
       categoryId: createdCategories[1].id,
       status: "ACTIVE",
       sortOrder: 1,
+      imageUrl:
+        "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1600&q=80",
     },
     {
       name: "Sewa Aula",
@@ -123,6 +129,8 @@ async function main() {
       categoryId: createdCategories[2].id,
       status: "ACTIVE",
       sortOrder: 1,
+      imageUrl:
+        "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1600&q=80",
     },
     {
       name: "Wisata Edukasi Cokelat",
@@ -136,13 +144,15 @@ async function main() {
       categoryId: createdCategories[3].id,
       status: "ACTIVE",
       sortOrder: 1,
+      imageUrl:
+        "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=1600&q=80",
     },
   ];
 
   for (const service of services) {
     await prisma.service.upsert({
       where: { slug: service.slug },
-      update: {},
+      update: { imageUrl: service.imageUrl },
       create: service as Parameters<typeof prisma.service.create>[0]["data"],
     });
   }

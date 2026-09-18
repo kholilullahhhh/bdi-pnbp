@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -19,6 +20,7 @@ import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
 import { getServiceBySlug } from "@/lib/db-queries";
 import { formatCurrency } from "@/lib/utils";
+import { getServiceImage } from "@/lib/service-images";
 
 const iconMap: Record<string, typeof GraduationCap> = {
   GraduationCap,
@@ -48,6 +50,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
   const Icon = iconMap[service.category?.icon || ""] || GraduationCap;
   const latestTariff = service.tariffs?.[0];
+  const heroImage = getServiceImage(service);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -97,6 +100,20 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             <div className="grid lg:grid-cols-3 gap-8">
               {/* Main Content */}
               <div className="lg:col-span-2 space-y-8">
+                {/* Hero Image */}
+                {heroImage && (
+                  <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden border border-border/60 shadow-sm bg-muted">
+                    <Image
+                      src={heroImage}
+                      alt={service.name}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 66vw"
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                )}
+
                 {/* Description */}
                 <div className="bg-white rounded-xl border border-border p-6">
                   <h2 className="text-lg font-bold text-foreground mb-3">Deskripsi Layanan</h2>

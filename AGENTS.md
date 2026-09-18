@@ -4,20 +4,22 @@
 
 ```bash
 npm run dev          # Start dev server (Turbopack)
-npm run build        # Production build
-npm run lint         # ESLint (next lint)
+npm run build        # Production build (also typechecks)
+npm run start        # Serve production build
+npx eslint .         # Lint — npm run lint is BROKEN (next lint removed in Next 16)
 npm run db:generate  # Regenerate Prisma client
-npm run db:push      # Push schema changes to DB
+npm run db:push      # Push schema to DB (prototyping)
+npm run db:migrate   # prisma migrate dev
 npm run db:seed      # Seed database (tsx prisma/seed.ts)
 npm run db:studio    # Prisma Studio
 ```
 
-PowerShell requires `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` before npm/npx. Use `;` not `&&` to chain commands.
+PowerShell requires `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` before npm/npx (npx.ps1 is blocked otherwise). Use `;` not `&&` to chain commands.
 
 ## Architecture
 
 - **Next.js 16** App Router. Route groups: `(public)`, `(dashboard)`. No `(admin)` group — all admin routes live under `/dashboard/`
-- **Prisma** ORM → PostgreSQL (Neon). Schema at `prisma/schema.prisma` (401 lines, ~23 models)
+- **Prisma** ORM → PostgreSQL (Neon). Schema at `prisma/schema.prisma` (403 lines, 18 models)
 - **NextAuth v5** beta with Credentials provider. JWT strategy. Auth config in `src/lib/auth.ts`
 - **Tailwind CSS v4** via `@tailwindcss/postcss` — no `tailwind.config` file, theme defined in `src/app/globals.css` `@theme {}` block
 - Path alias: `@/*` → `./src/*`
@@ -27,14 +29,18 @@ PowerShell requires `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass`
 - **Prisma singleton** — Always import `prisma` from `@/lib/prisma`. Uses `globalThis` caching to avoid multiple clients in dev
 - **NextAuth v5 beta** — Uses `handlers` export pattern (not v4-style). Auth callbacks cast `role` onto session via `as unknown as { role: string }`
 - **Tailwind v4** — No `tailwind.config.ts`. Theme tokens in `globals.css` `@theme {}`. Custom utilities (gradient-welcome, shadow-card-hover, bg-grid-pattern, etc.) defined in `@layer utilities`. Line-clamp utilities are manual (not plugin)
-- **Role-based access** — Roles: `PUBLIC | USER | OPERATOR | ADMIN | SUPER_ADMIN | LEADER | AUDITOR`. Route groups are layout wrappers only — no server-side auth guards in layouts. Middleware protects `/dashboard/*` and specific API routes. Protect pages individually
+- **Role-based access** — Roles: `PUBLIC | USER | OPERATOR | ADMIN | SUPER_ADMIN | LEADER | AUDITOR`. Route groups are layout wrappers only — no server-side auth guards in layouts. Middleware matcher covers ONLY `/dashboard/*`, `/api/applications/*`, `/api/payments/*` — every other page/route (incl. public GETs like `/api/services`, `/api/faqs`) is outside it. Protect pages individually with `requireAuth`/`requireRole` in the route/page itself
+- **Cached public queries** — `src/lib/db-queries.ts` wraps services/announcements/FAQs in `unstable_cache` (revalidate 60s, tags `services`/`announcements`/`faqs`). Mutations must `revalidateTag()` or changes won't appear for up to 60s
+- **NextAuth handlers** — Exported from BOTH `/api/auth/[...nextauth]/route.ts` and a redundant `/api/auth/route.ts`
 - **Status enums** — `ApplicationStatus`, `PaymentStatus`, `ServiceStatus`, `TariffVerificationStatus` in schema. Display helpers in `src/lib/utils.ts` (`getStatusLabel`, `getStatusVariant`, `getStatusColor`)
 - **Status transitions** — Enforced by `src/lib/status-machine.ts` with role-based allowed transitions
-- **Application numbers** — Generated client-side via `generateApplicationNumber()` (format: `PNBP-YYYYMM-XXXX`). Not unique-guaranteed at DB level
+- **Application numbers** — Generated server-side in `api/applications/route.ts` via `generateApplicationNumber()` (`PNBP-YYYYMM-XXXX`) with a check-exists/retry loop. Not unique-guaranteed at DB level
 - **Neon database** — `DATABASE_URL` (pooled, `&pool_timeout=30`) for queries, `DIRECT_URL` (direct) for migrations. Don't mix them
 - **Dashboard queries** — Split `Promise.all` into 2 batches with try/catch for graceful degradation (`src/app/(dashboard)/dashboard/page.tsx`)
 - **No recharts/TanStack Table in use** — Packages installed but not imported. All tables are custom HTML. Charts are placeholders
 - **Dialog component** — Uses native `<dialog>` with `showModal()`/`close()`. Centering requires `m-auto` class on the dialog element
+- **Remote images** — `next.config.ts` whitelists image hosts (unsplash, `bdimakassar.kemenperin.go.id`). New remote hosts must be added to `remotePatterns` or `<img>` will break
+- **Zod schemas** — Body validation lives in `src/validations/index.ts`; API routes parse then return `parsed.error.errors[0].message`
 - **Admin CRUD pattern** — Server components fetch data → pass to client table components → client handles search, modals, form submission via `fetch()` to API routes → `router.refresh()` after mutations
 
 ## Route Structure
@@ -130,12 +136,13 @@ All under `src/app/api/`:
 - `settings` — GET/PUT system settings (ADMIN+, upserts by key)
 - `categories`, `faqs`, `announcements`, `users` — Content/user endpoints
 - `users/[id]` — GET/PUT (admin), PATCH (self-service profile + password change)
-- Middleware allows unauthenticated GET on `/api/services`, `/api/categories`, `/api/faqs`, `/api/announcements`
+- Middleware matcher reaches only `/api/applications/*` and `/api/payments/*`; `/api/services`, `/api/categories`, `/api/faqs`, `/api/announcements` are unguarded (public GET by design, non-GET enforced inside the route handlers)
 
 ## Verification After Changes
 
 ```bash
 npx tsc --noEmit    # TypeScript check (must be 0 errors)
+npx eslint .        # Lint (flat config in eslint.config.mjs)
 npm run build       # Production build (must succeed)
 ```
 

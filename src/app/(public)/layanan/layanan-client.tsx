@@ -17,6 +17,7 @@ import { PublicNavbar } from "@/components/layout/public-navbar";
 import { PublicFooter } from "@/components/layout/public-footer";
 import { PageHero } from "@/components/landing/page-hero";
 import { formatCurrency } from "@/lib/utils";
+import { getServiceImage } from "@/lib/service-images";
 
 const iconMap: Record<string, typeof GraduationCap> = {
   GraduationCap,
@@ -25,25 +26,23 @@ const iconMap: Record<string, typeof GraduationCap> = {
   Compass,
 };
 
-const serviceImages: Record<string, string> = {
-  "diklat-pelatihan": "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80",
-  "jasa-narasumber": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=600&q=80",
-  "penyewaan-fasilitas": "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=80",
-  "wisata-edukasi": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80",
-};
-
 const serviceGradients: Record<string, string> = {
   "diklat-pelatihan": "from-blue-600 to-blue-800",
   "jasa-narasumber": "from-emerald-600 to-emerald-800",
   "penyewaan-fasilitas": "from-amber-600 to-amber-800",
   "wisata-edukasi": "from-violet-600 to-violet-800",
+  "pelatihan-penyelia-halal": "from-blue-600 to-blue-800",
+  "pandu-kakao": "from-amber-700 to-orange-800",
+  "jasa-narasumber-teknis": "from-emerald-600 to-emerald-800",
+  "sewa-aula": "from-indigo-600 to-indigo-800",
+  "wisata-edukasi-cokelat": "from-violet-600 to-fuchsia-700",
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function ServiceCard({ service }: { service: any }) {
   const Icon = iconMap[service.category?.icon] || GraduationCap;
   const latestTariff = service.tariffs?.[0];
-  const imgSrc = serviceImages[service.slug];
+  const imgSrc = getServiceImage(service);
   const gradient = serviceGradients[service.slug] || "from-primary-600 to-primary-800";
 
   return (
@@ -51,7 +50,7 @@ function ServiceCard({ service }: { service: any }) {
       <div className="grid lg:grid-cols-[1fr_1fr] gap-0">
         {/* Image side */}
         <div
-          className="relative h-48 lg:h-auto min-h-[200px] overflow-hidden bg-cover bg-center"
+          className="relative h-48 lg:h-auto min-h-[200px] overflow-hidden bg-cover bg-center transition-transform duration-500 group-hover:scale-[1.02]"
           style={imgSrc ? { backgroundImage: `url(${imgSrc})` } : undefined}
         >
           {!imgSrc && (
